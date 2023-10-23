@@ -90,7 +90,7 @@ class StateMachine:
 
 
 
-class User_char:
+class User:
     def __init__(self):
         self.x, self.y = 400, 90
         self.frame = 0
