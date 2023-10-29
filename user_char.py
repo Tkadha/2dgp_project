@@ -57,9 +57,9 @@ class Idle:
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, 75, 75)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
         elif user.dir == 1:
-            user.image.clip_draw(35 + user.frame * 35, user.action * 40, -35, 40, user.x, user.y, 75, 75)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
 
         pass
 
@@ -104,9 +104,9 @@ class Run:
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, 75, 75)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
         elif user.dir == 1:
-            user.image.clip_draw(35 + user.frame * 35, user.action * 40, -35, 40, user.x, user.y, 75, 75)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
         pass
 
 
