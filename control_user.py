@@ -1,5 +1,4 @@
 from pico2d import *
-
 from User_char import User
 
 
@@ -16,12 +15,11 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         else:
-            User.handle_event(event)
+            user.handle_event(event)
 
 
 def reset_world():
     global running
-    global team
     global world
     global user
 
@@ -53,6 +51,6 @@ while running:
     handle_events()
     update_world()
     render_world()
-    delay(0.01)
+    delay(0.1)
 # finalization code
 close_canvas()
