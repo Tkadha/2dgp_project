@@ -1,12 +1,12 @@
 from pico2d import load_image
 
 
-class Grass:
+class Field:
     def __init__(self):
         self.image = load_image('field.png')
 
     def draw(self):
-        self.image.draw(400, 300)
+        self.image.clip_draw(0, 0, 512, 240, 400, 300, 800, 600)
 
     def update(self):
         pass
