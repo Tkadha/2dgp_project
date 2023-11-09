@@ -1,7 +1,7 @@
 from pico2d import *
 
 import game_world
-from User_char import User
+from user_char import User
 from field import Field
 
 
