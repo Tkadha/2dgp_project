@@ -1,5 +1,8 @@
 from pico2d import *
+
+import game_world
 from User_char import User
+from field import Field
 
 
 # Game object class here
@@ -21,26 +24,25 @@ def handle_events():
 def reset_world():
     global running
     global world
+    global Field
     global user
 
     running = True
     world = []
 
+    Field = Field()
+    game_world.add_object(Field, 0)
     user = User()
-    world.append(user)
-
+    game_world.add_object(user, 1)
 
 
 def update_world():
-    for o in world:
-        o.update()
-    pass
+    game_world.update()
 
 
 def render_world():
     clear_canvas()
-    for o in world:
-        o.draw()
+    game_world.render()
     update_canvas()
 
 
