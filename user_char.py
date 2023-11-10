@@ -89,7 +89,7 @@ class Run:
     @staticmethod
     def do(user):
         user.frame = (user.frame + 1) % 4
-        if 100 <= user.x <= 1100:
+        if 0 + 50 <= user.x <= 1200 - 50:
             if user.LR_way == 1:
                 user.x += user.speed
             elif user.LR_way == 2:
@@ -99,8 +99,9 @@ class Run:
                 user.y -= user.speed / 2
             elif user.UD_way == 2:
                 user.y += user.speed / 2
+        check_out_field(user)
         if user.speed <= 5:
-            user.speed += 1
+            user.speed += 0.5
         pass
 
     @staticmethod
@@ -169,3 +170,14 @@ class User:
 
     def draw(self):
         self.state_machine.draw()
+
+
+def check_out_field(user):
+    if user.x < 50:
+        user.x = 50
+    elif user.x > 1150:
+        user.x = 1150
+    if user.y < 50:
+        user.y = 50
+    elif user.y > 750:
+        user.y = 750
