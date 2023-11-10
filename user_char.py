@@ -41,7 +41,7 @@ class Idle:
     def enter(user, e):
         user.action = 3
         user.frame = 0
-        user.speed = 5
+        user.speed = 1
         user.LR_way, user.UD_way = 0, 0
         pass
 
@@ -59,7 +59,8 @@ class Idle:
         if user.dir == 0:
             user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,user.size, user.size)
+            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,
+                                           user.size)
         pass
 
 
@@ -88,16 +89,18 @@ class Run:
     @staticmethod
     def do(user):
         user.frame = (user.frame + 1) % 4
-        if user.LR_way == 1:
-            user.x += user.speed
-        elif user.LR_way == 2:
-            user.x -= user.speed
-        if user.UD_way == 1:
-            user.y -= user.speed - 5
-        elif user.UD_way == 2:
-            user.y += user.speed + 5
-        if user.speed <= 40:
-            user.speed += 5
+        if 100 <= user.x <= 1100:
+            if user.LR_way == 1:
+                user.x += user.speed
+            elif user.LR_way == 2:
+                user.x -= user.speed
+        if 0 <= user.y <= 800:
+            if user.UD_way == 1:
+                user.y -= user.speed / 2
+            elif user.UD_way == 2:
+                user.y += user.speed / 2
+        if user.speed <= 5:
+            user.speed += 1
         pass
 
     @staticmethod
@@ -105,7 +108,8 @@ class Run:
         if user.dir == 0:
             user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,user.size, user.size)
+            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,
+                                           user.size)
         pass
 
 
@@ -147,12 +151,12 @@ class User:
         self.frame = 0
         self.dir = 0
         self.action = 3
-        self.speed = 5
+        self.speed = 1
         self.LR_way = 1
         self.UD_way = 1
         self.size = 75
         if User.image == None:
-            User.image = load_image('red_hockey.png')
+            User.image = load_image('resource/red_hockey.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
