@@ -21,7 +21,7 @@ def handle_events():
             user.handle_event(event)
 
 
-def reset_world():
+def init():
     global running
     global world
     global Field
@@ -36,25 +36,15 @@ def reset_world():
     game_world.add_object(user, 1)
 
 
-def update_world():
+def update():
     game_world.update()
 
 
-def render_world():
+def draw():
     clear_canvas()
     game_world.render()
     update_canvas()
 
-canvas_width=1200
-canvas_height=800
 
-open_canvas(canvas_width,canvas_height)
-reset_world()
-# game loop
-while running:
-    handle_events()
-    update_world()
-    render_world()
-    delay(0.1)
-# finalization code
-close_canvas()
+def finish():
+    pass
