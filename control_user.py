@@ -45,8 +45,10 @@ def render_world():
     game_world.render()
     update_canvas()
 
+canvas_width=1200
+canvas_height=800
 
-open_canvas()
+open_canvas(canvas_width,canvas_height)
 reset_world()
 # game loop
 while running:

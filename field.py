@@ -6,7 +6,7 @@ class Field:
         self.image = load_image('field.png')
 
     def draw(self):
-        self.image.clip_draw(0, 0, 512, 240, 400, 300, 800, 600)
+        self.image.clip_draw(0, 0, 512, 240, 1200 // 2, 800 // 2, 1200, 800)
 
     def update(self):
         pass

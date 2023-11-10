@@ -57,10 +57,9 @@ class Idle:
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
-
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         pass
 
 
@@ -104,9 +103,9 @@ class Run:
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y)
+            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         pass
 
 
@@ -151,6 +150,7 @@ class User:
         self.speed = 15
         self.LR_way = 1
         self.UD_way = 1
+        self.size = 75
         if User.image == None:
             User.image = load_image('red_hockey.png')
         self.state_machine = StateMachine(self)
