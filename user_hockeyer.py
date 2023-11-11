@@ -159,7 +159,7 @@ class User:
     image = None
 
     def __init__(self):
-        self.x, self.y = 400, 90
+        self.x, self.y = 400, 350
         self.frame = 0
         self.dir = 0
         self.action = 3
