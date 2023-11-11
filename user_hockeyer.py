@@ -192,6 +192,13 @@ class User:
     def get_char_puck_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y
 
+    def handle_collision(self, group, other):
+        if group == 'user:puck':
+            pass
+
+
+
+
 
 def check_out_field(user):
     if user.x < 50:
