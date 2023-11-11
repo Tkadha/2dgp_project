@@ -60,3 +60,4 @@ def run(start_mode):
     while (len(stack) > 0):
         stack[-1].finish()
         stack.pop()
+

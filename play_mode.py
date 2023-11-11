@@ -2,7 +2,7 @@ from pico2d import *
 
 import game_framework
 import game_world
-from user_char import User
+from user_hockeyer import User
 from field import Field
 
 
