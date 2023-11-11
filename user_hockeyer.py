@@ -1,6 +1,8 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN
+from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, draw_rectangle
+
+import game_framework
 
 
 def right_down(e):
@@ -35,14 +37,22 @@ def under_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_DOWN
 
 
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+IDLE_FRAMES_PER_ACTION = 2
+RUN_FRAMES_PER_ACTION = 4
+
+
 class Idle:
 
     @staticmethod
     def enter(user, e):
         user.action = 3
         user.frame = 0
-        user.speed = 1
         user.LR_way, user.UD_way = 0, 0
+        user.RUN_SPEED_KMPH = 20.0  # Km / Hour
         pass
 
     @staticmethod
@@ -51,15 +61,16 @@ class Idle:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + 1) % 2
+        user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         pass
 
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
+            user.image.clip_draw(int(user.frame) * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,
+            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
+                                           user.size,
                                            user.size)
         pass
 
@@ -88,29 +99,29 @@ class Run:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + 1) % 4
+        user.frame = (user.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         if 0 + 50 <= user.x <= 1200 - 50:
             if user.LR_way == 1:
-                user.x += user.speed
+                user.x += user.RUN_SPEED_PPS * game_framework.frame_time
             elif user.LR_way == 2:
-                user.x -= user.speed
+                user.x -= user.RUN_SPEED_PPS * game_framework.frame_time
         if 0 <= user.y <= 800:
             if user.UD_way == 1:
-                user.y -= user.speed / 2
+                user.y -= user.RUN_SPEED_PPS * game_framework.frame_time / 2
             elif user.UD_way == 2:
-                user.y += user.speed / 2
+                user.y += user.RUN_SPEED_PPS * game_framework.frame_time / 2
         check_out_field(user)
-        if user.speed <= 5:
-            user.speed += 0.5
+        if user.RUN_SPEED_KMPH < 100:
+            user.RUN_SPEED_KMPH += 0.1
+            user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         pass
 
     @staticmethod
     def draw(user):
         if user.dir == 0:
-            user.image.clip_draw(user.frame * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
+            user.image.clip_draw(int(user.frame) * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(user.frame * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,
-                                           user.size)
+            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,user.size)
         pass
 
 
@@ -152,10 +163,12 @@ class User:
         self.frame = 0
         self.dir = 0
         self.action = 3
-        self.speed = 1
         self.LR_way = 1
         self.UD_way = 1
         self.size = 75
+        self.bounding_box_size = 40
+        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         if User.image == None:
             User.image = load_image('resource/red_hockey.png')
         self.state_machine = StateMachine(self)
@@ -170,6 +183,10 @@ class User:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y + self.bounding_box_size
 
 
 def check_out_field(user):
