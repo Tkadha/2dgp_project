@@ -4,7 +4,7 @@ import game_framework
 import game_world
 from user_hockeyer import User
 from field import Field
-
+from hockeypuck import Puck
 
 # Game object class here
 
@@ -25,16 +25,19 @@ def handle_events():
 def init():
     global running
     global world
-    global Field
+    global field
     global user
-
+    global puck
     running = True
     world = []
 
-    Field = Field()
-    game_world.add_object(Field, 0)
+    field = Field()
+    game_world.add_object(field, 0)
     user = User()
     game_world.add_object(user, 1)
+    puck = Puck()
+    game_world.add_object(puck, 1)
+
 
 
 def update():
