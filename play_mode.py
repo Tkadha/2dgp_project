@@ -38,10 +38,12 @@ def init():
     puck = Puck()
     game_world.add_object(puck, 1)
 
+    game_world.add_collision_pair('user:puck',user,puck)
 
 
 def update():
     game_world.update()
+    game_world.handle_collisions()
 
 
 def draw():
