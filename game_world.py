@@ -2,8 +2,8 @@ objects = [[], [], []]
 
 
 # layer 0: 배경
-# layer 1: 캐릭터, 볼
-# later 2: 골대
+# layer 1: 볼
+# later 2: 캐릭터
 
 def add_object(o, depth):
     objects[depth].append(o)
@@ -34,7 +34,7 @@ def render():
 
 
 def collide(a, b):
-    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_a, bottom_a, right_a, top_a = a.get_char_puck_bb()
     left_b, bottom_b, right_b, top_b = b.get_bb()
 
     if left_a > right_b: return False
