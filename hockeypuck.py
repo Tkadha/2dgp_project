@@ -17,7 +17,7 @@ class Puck:
 
     def draw(self):
         self.image.clip_draw(0, 0, 100, 75, self.x, self.y, self.size,self.size)
-        draw_rectangle(*self.get_char_bb())
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.x += self.x_velocity * 100 * game_framework.frame_time
@@ -26,5 +26,5 @@ class Puck:
             game_world.remove_object(self)
 
     # fill here
-    def get_char_bb(self):
+    def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y + self.bounding_box_size
