@@ -184,9 +184,13 @@ class User:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_char_puck_bb())
 
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y + self.bounding_box_size
+
+    def get_char_puck_bb(self):
+        return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y
 
 
 def check_out_field(user):
