@@ -121,7 +121,8 @@ class Run:
         if user.dir == 0:
             user.image.clip_draw(int(user.frame) * 35, user.action * 40, 35, 40, user.x, user.y, user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y, user.size,user.size)
+            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
+                                           user.size, user.size)
         pass
 
 
@@ -184,20 +185,23 @@ class User:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
-        draw_rectangle(*self.get_char_puck_bb())
 
     def get_bb(self):
-        return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y + self.bounding_box_size
-
-    def get_char_puck_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
             pass
-
-
-
+        if group == 'user:field':
+            if self.x - self.bounding_box_size <= 100:
+                self.x = 100 + self.bounding_box_size
+            elif self.x + self.bounding_box_size >= 1100:
+                self.x = 1100 - self.bounding_box_size
+            if self.y - self.bounding_box_size <= 50:
+                self.y = 50 + self.bounding_box_size
+            elif self.y >= 700:
+                self.y = 700
+            pass
 
 
 def check_out_field(user):

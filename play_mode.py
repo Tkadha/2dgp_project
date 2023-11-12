@@ -6,6 +6,7 @@ from user_hockeyer import User
 from field import Field
 from hockeypuck import Puck
 
+
 # Game object class here
 
 
@@ -38,7 +39,8 @@ def init():
     puck = Puck()
     game_world.add_object(puck, 1)
 
-    game_world.add_collision_pair('user:puck',user,puck)
+    game_world.add_collision_pair('user:puck', user, puck)
+    game_world.add_collision_pair('user:field', user, field)
 
 
 def update():
@@ -55,8 +57,10 @@ def draw():
 def finish():
     pass
 
+
 def pause():
     pass
+
 
 def resume():
     pass
