@@ -1,6 +1,7 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
 
-from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, draw_rectangle
+from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_s, \
+    draw_rectangle, get_time
 
 import game_framework
 
@@ -37,6 +38,14 @@ def under_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_DOWN
 
 
+def s_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_s
+
+
+def time_out(e):
+    return e[0] == 'TIME_OUT'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 
 TIME_PER_ACTION = 0.5
@@ -53,15 +62,40 @@ class Idle:
         user.frame = 0
         user.LR_way, user.UD_way = 0, 0
         user.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        if time_out(e):
+            if user.skill == 'SizeUp':
+                user.size = 75
+                user.bounding_box_size = 40
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 100 - 0.1
+                user.speed_increase = 0.1
+                if user.RUN_SPEED_KMPH > user.max_speed:
+                    user.RUN_SPEED_KMPH = user.max_speed
+                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+                pass
         pass
 
     @staticmethod
     def exit(user, e):
+        if s_down(e):
+            if user.skill == 'SizeUp':
+                user.size *= 2
+                user.bounding_box_size *= 2
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 150
+                user.speed_increase = 0.5
+                pass
+            user.skill_onoff = 'on'
+            user.skill_time = get_time()
         pass
 
     @staticmethod
     def do(user):
         user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
+        if user.skill_onoff == 'on':
+            if get_time() - user.skill_time > 5:
+                user.skill_onoff = 'off'
+                user.state_machine.handle_event(('TIME_OUT', 0))
         pass
 
     @staticmethod
@@ -91,10 +125,33 @@ class Run:
             user.UD_way = 1
         elif above_down(e):
             user.UD_way = 2
+
+        if time_out(e):
+            if user.skill == 'SizeUp':
+                user.size = 75
+                user.bounding_box_size = 40
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 100
+                user.speed_increase = 0.1
+                if user.RUN_SPEED_KMPH > user.max_speed:
+                    user.RUN_SPEED_KMPH = user.max_speed
+                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+                pass
+
         pass
 
     @staticmethod
     def exit(user, e):
+        if s_down(e):
+            if user.skill == 'SizeUp':
+                user.size *= 2
+                user.bounding_box_size *= 2
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 150
+                user.speed_increase = 0.5
+                pass
+            user.skill_onoff = 'on'
+            user.skill_time = get_time()
         pass
 
     @staticmethod
@@ -110,10 +167,16 @@ class Run:
                 user.y -= user.RUN_SPEED_PPS * game_framework.frame_time / 2
             elif user.UD_way == 2:
                 user.y += user.RUN_SPEED_PPS * game_framework.frame_time / 2
+
         check_out_field(user)
-        if user.RUN_SPEED_KMPH < 100:
-            user.RUN_SPEED_KMPH += 0.1
+
+        if user.RUN_SPEED_KMPH < user.max_speed:
+            user.RUN_SPEED_KMPH += user.speed_increase
             user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+        if user.skill_onoff == 'on':
+            if get_time() - user.skill_time > 5:
+                user.skill_onoff = 'off'
+                user.state_machine.handle_event(('TIME_OUT', 0))
         pass
 
     @staticmethod
@@ -132,9 +195,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, above_down: Run, above_up: Run,
-                   under_down: Run, under_up: Run},
+                   under_down: Run, under_up: Run, s_down: Idle, time_out: Idle},
             Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, above_down: Idle, above_up: Idle,
-                  under_down: Idle, under_up: Idle}
+                  under_down: Idle, under_up: Idle, s_down: Run, time_out: Run}
         }
 
     def start(self):
@@ -168,6 +231,11 @@ class User:
         self.UD_way = 1
         self.size = 75
         self.bounding_box_size = 40
+        self.skill = 'SizeUp'
+        self.skill_time = get_time()
+        self.skill_onoff = 'off'
+        self.max_speed = 100
+        self.speed_increase = 0.1
         self.RUN_SPEED_KMPH = 20.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         if User.image == None:
