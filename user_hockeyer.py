@@ -46,6 +46,10 @@ def time_out(e):
     return e[0] == 'TIME_OUT'
 
 
+def change_idle(e):
+    return e[0] == 'CHANGE_IDLE'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 
 TIME_PER_ACTION = 0.5
@@ -118,13 +122,17 @@ class Run:
         if right_down(e):
             user.LR_way = 1
             user.dir = 0
+            user.key_down_count += 1
         elif left_down(e):
             user.LR_way = 2
             user.dir = 1
+            user.key_down_count += 1
         elif under_down(e):
             user.UD_way = 1
+            user.key_down_count += 1
         elif above_down(e):
             user.UD_way = 2
+            user.key_down_count += 1
 
         if time_out(e):
             if user.skill == 'SizeUp':
@@ -137,7 +145,6 @@ class Run:
                     user.RUN_SPEED_KMPH = user.max_speed
                     user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
                 pass
-
         pass
 
     @staticmethod
@@ -152,6 +159,23 @@ class Run:
                 pass
             user.skill_onoff = 'on'
             user.skill_time = get_time()
+
+        if right_up(e):
+            user.key_down_count -= 1
+            user.LR_way = 0
+            pass
+        elif left_up(e):
+            user.key_down_count -= 1
+            user.LR_way = 0
+            pass
+        elif under_up(e):
+            user.key_down_count -= 1
+            user.UD_way = 0
+            pass
+        elif above_up(e):
+            user.key_down_count -= 1
+            user.UD_way = 0
+            pass
         pass
 
     @staticmethod
@@ -177,6 +201,8 @@ class Run:
             if get_time() - user.skill_time > 5:
                 user.skill_onoff = 'off'
                 user.state_machine.handle_event(('TIME_OUT', 0))
+        if user.key_down_count <= 0:
+            user.state_machine.handle_event(('CHANGE_IDLE', 0))
         pass
 
     @staticmethod
@@ -196,10 +222,9 @@ class StateMachine:
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, above_down: Run, above_up: Run,
                    under_down: Run, under_up: Run, s_down: Idle, time_out: Idle},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle, above_down: Idle, above_up: Idle,
-                  under_down: Idle, under_up: Idle, s_down: Run, time_out: Run}
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, above_down: Run, above_up: Run,
+                  under_down: Run, under_up: Run, s_down: Run, time_out: Run, change_idle: Idle}
         }
-
     def start(self):
         self.cur_state.enter(self.user, ('START', 0))
 
@@ -229,6 +254,7 @@ class User:
         self.action = 3
         self.LR_way = 1
         self.UD_way = 1
+        self.key_down_count = 0
         self.size = 75
         self.bounding_box_size = 25
         self.skill = 'SizeUp'
