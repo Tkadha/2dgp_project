@@ -230,7 +230,7 @@ class User:
         self.LR_way = 1
         self.UD_way = 1
         self.size = 75
-        self.bounding_box_size = 40
+        self.bounding_box_size = 25
         self.skill = 'SizeUp'
         self.skill_time = get_time()
         self.skill_onoff = 'off'
@@ -255,7 +255,7 @@ class User:
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - self.bounding_box_size, self.y - self.bounding_box_size, self.x + self.bounding_box_size, self.y
+        return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
@@ -265,8 +265,8 @@ class User:
                 self.x = 100 + self.bounding_box_size
             elif self.x + self.bounding_box_size >= 1100:
                 self.x = 1100 - self.bounding_box_size
-            if self.y - self.bounding_box_size <= 50:
-                self.y = 50 + self.bounding_box_size
+            if self.y - self.bounding_box_size - 10 <= 50:
+                self.y = 50 + self.bounding_box_size + 10
             elif self.y >= 700:
                 self.y = 700
             pass
