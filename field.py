@@ -18,3 +18,5 @@ class Field:
     def handle_collision(self, group, other):
         if group == 'user:field':
             pass
+        if group == 'puck:field':
+            pass

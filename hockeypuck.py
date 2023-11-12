@@ -40,3 +40,14 @@ class Puck:
                 self.x = other.x - self.size
                 self.y = other.y - self.size
                 pass
+        if group == 'puck:field':
+            if self.x - self.bounding_box_size <= 100:
+                self.x_velocity *= -1
+            elif self.x + self.bounding_box_size >= 1100:
+                self.x_velocity *= -1
+            if self.y - self.bounding_box_size <= 50:
+                self.y_velocity *= -1
+            elif self.y + self.bounding_box_size>= 700:
+                self.y_velocity *= -1
+            pass
+

@@ -41,6 +41,7 @@ def init():
 
     game_world.add_collision_pair('user:puck', user, puck)
     game_world.add_collision_pair('user:field', user, field)
+    game_world.add_collision_pair('puck:field', puck, field)
 
 
 def update():
