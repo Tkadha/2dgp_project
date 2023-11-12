@@ -97,7 +97,7 @@ class Idle:
     def do(user):
         user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         if user.skill_onoff == 'on':
-            if get_time() - user.skill_time > 5:
+            if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
                 user.state_machine.handle_event(('TIME_OUT', 0))
         pass
@@ -198,7 +198,7 @@ class Run:
             user.RUN_SPEED_KMPH += user.speed_increase
             user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         if user.skill_onoff == 'on':
-            if get_time() - user.skill_time > 5:
+            if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
                 user.state_machine.handle_event(('TIME_OUT', 0))
         if user.key_down_count <= 0:
@@ -264,7 +264,7 @@ class User:
         self.speed_increase = 0.1
         self.RUN_SPEED_KMPH = 20.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
-        if User.image == None:
+        if User.image is None:
             User.image = load_image('resource/red_hockey.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
