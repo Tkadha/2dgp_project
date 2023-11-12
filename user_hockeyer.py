@@ -65,7 +65,7 @@ class Idle:
         if time_out(e):
             if user.skill == 'SizeUp':
                 user.size = 75
-                user.bounding_box_size = 40
+                user.bounding_box_size = 25
             elif user.skill == 'SpeedUp':
                 user.max_speed = 100 - 0.1
                 user.speed_increase = 0.1
@@ -77,7 +77,7 @@ class Idle:
 
     @staticmethod
     def exit(user, e):
-        if s_down(e):
+        if s_down(e) and user.skill_onoff == 'off':
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
@@ -129,7 +129,7 @@ class Run:
         if time_out(e):
             if user.skill == 'SizeUp':
                 user.size = 75
-                user.bounding_box_size = 40
+                user.bounding_box_size = 25
             elif user.skill == 'SpeedUp':
                 user.max_speed = 100
                 user.speed_increase = 0.1
@@ -142,7 +142,7 @@ class Run:
 
     @staticmethod
     def exit(user, e):
-        if s_down(e):
+        if s_down(e) and user.skill_onoff == 'off':
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
