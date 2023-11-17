@@ -2,10 +2,10 @@ from pico2d import *
 
 import game_framework
 import game_world
-from user_hockeyer import User
+from user_hockey_player import User
 from field import Field
 from hockeypuck import Puck
-
+from ai import Ai
 
 # Game object class here
 
@@ -29,6 +29,7 @@ def init():
     global field
     global user
     global puck
+    global ai
     running = True
     world = []
 
@@ -38,6 +39,8 @@ def init():
     game_world.add_object(user, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
+    ai=Ai(800, 300, 'yellow')
+    game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
     game_world.add_collision_pair('user:field', user, field)

@@ -65,7 +65,7 @@ class Idle:
         user.action = 3
         user.frame = 0
         user.LR_way, user.UD_way = 0, 0
-        user.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        user.RUN_SPEED_KMPH = 5.0  # Km / Hour
         if time_out(e):
             if user.skill == 'SizeUp':
                 user.size = 75
@@ -95,7 +95,7 @@ class Idle:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
+        user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
         if user.skill_onoff == 'on':
             if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
@@ -180,7 +180,7 @@ class Run:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        user.frame = (user.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         if 0 + 50 <= user.x <= 1200 - 50:
             if user.LR_way == 1:
                 user.x += user.RUN_SPEED_PPS * game_framework.frame_time
@@ -262,10 +262,10 @@ class User:
         self.skill_onoff = 'off'
         self.max_speed = 100
         self.speed_increase = 0.1
-        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 5.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         if User.image is None:
-            User.image = load_image('resource/red_hockey.png')
+            User.image = load_image('./resource/red_hockey.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 

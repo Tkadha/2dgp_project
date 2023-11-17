@@ -8,11 +8,11 @@ class Puck:
 
     def __init__(self):
         if Puck.image == None:
-            Puck.image = load_image('resource/hockeypuck.png')
+            Puck.image = load_image('./resource/hockeypuck.png')
         self.x = 600
         self.y = 375
-        self.x_velocity = 0
-        self.y_velocity = 0
+        self.x_velocity = 3
+        self.y_velocity = 5
         self.size = 25
         self.bounding_box_size = self.size / 2
 
