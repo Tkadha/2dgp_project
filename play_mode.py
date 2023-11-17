@@ -35,7 +35,7 @@ def init():
 
     field = Field()
     game_world.add_object(field, 0)
-    user = User()
+    user = User('red')
     game_world.add_object(user, 2)
     puck = Puck()
     game_world.add_object(puck, 1)

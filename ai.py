@@ -47,6 +47,8 @@ class Ai:
                                            self.size, self.size)
         draw_rectangle(*self.get_bb())
 
-
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
+
+    def handle_event(self, event):
+        pass

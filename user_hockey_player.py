@@ -247,7 +247,16 @@ class StateMachine:
 class User:
     image = None
 
-    def __init__(self):
+    def load_image(self, image):
+        if User.image is None:
+            if image == 'black':
+                self.image = load_image('./resource/black_hockey.png')
+            elif image == 'yellow':
+                self.image = load_image('./resource/yellow_hockey.png')
+            elif image == 'red':
+                self.image = load_image('./resource/red_hockey.png')
+
+    def __init__(self, image=None):
         self.x, self.y = 400, 350
         self.frame = 0
         self.dir = 0
@@ -264,8 +273,7 @@ class User:
         self.speed_increase = 0.1
         self.RUN_SPEED_KMPH = 5.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
-        if User.image is None:
-            User.image = load_image('./resource/red_hockey.png')
+        self.load_image(image)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
