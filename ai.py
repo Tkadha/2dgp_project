@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 
 import game_framework
 
@@ -32,6 +32,7 @@ class Ai:
         self.dir = 1
         self.face_dir = 1
         self.size = 75
+        self.bounding_box_size = 25
         self.load_image(image)
 
     def update(self):
@@ -44,4 +45,8 @@ class Ai:
         elif self.dir == 1:
             self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x, self.y,
                                            self.size, self.size)
-        pass
+        draw_rectangle(*self.get_bb())
+
+
+    def get_bb(self):
+        return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
