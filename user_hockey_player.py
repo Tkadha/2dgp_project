@@ -2,6 +2,7 @@
 
 from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_s, \
     draw_rectangle, get_time
+from sdl2 import SDLK_d
 
 import game_framework
 
@@ -42,6 +43,10 @@ def s_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_s
 
 
+def d_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
+
+
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
@@ -50,12 +55,17 @@ def change_idle(e):
     return e[0] == 'CHANGE_IDLE'
 
 
+def shooting_end(e):
+    return e[0] == 'SHOOTING_END'
+
+
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 IDLE_FRAMES_PER_ACTION = 2
 RUN_FRAMES_PER_ACTION = 4
+SHOOT_FRAMES_PER_ACTION = 6
 
 
 class Idle:
@@ -95,7 +105,8 @@ class Idle:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+        user.frame = (
+                             user.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
         if user.skill_onoff == 'on':
             if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
@@ -180,7 +191,8 @@ class Run:
 
     @staticmethod
     def do(user):
-        user.frame = (user.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
+        user.frame = (
+                             user.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         if 0 + 50 <= user.x <= 1200 - 50:
             if user.LR_way == 1:
                 user.x += user.RUN_SPEED_PPS * game_framework.frame_time
@@ -215,16 +227,79 @@ class Run:
         pass
 
 
+class Shoot:
+    @staticmethod
+    def enter(user, e):
+        print('shooting')
+        user.action = 1
+        user.frame = 0
+        if time_out(e):
+            if user.skill == 'SizeUp':
+                user.size = 75
+                user.bounding_box_size = 25
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 100
+                user.speed_increase = 0.1
+                if user.RUN_SPEED_KMPH > user.max_speed:
+                    user.RUN_SPEED_KMPH = user.max_speed
+                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+                pass
+        pass
+
+    @staticmethod
+    def exit(user, e):
+        print('shooting end')
+        if s_down(e) and user.skill_onoff == 'off':
+            if user.skill == 'SizeUp':
+                user.size *= 2
+                user.bounding_box_size *= 2
+            elif user.skill == 'SpeedUp':
+                user.max_speed = 150
+                user.speed_increase = 0.5
+                pass
+            user.skill_onoff = 'on'
+            user.skill_time = get_time()
+        pass
+
+    @staticmethod
+    def do(user):
+        if user.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
+            user.state_machine.handle_event(('SHOOTING_END', 0))
+        user.frame = (user.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+        if user.skill_onoff == 'on':
+            if get_time() - user.skill_time > 3:
+                user.skill_onoff = 'off'
+                user.state_machine.handle_event(('TIME_OUT', 0))
+        pass
+
+    @staticmethod
+    def draw(user):
+        if user.dir == 0:
+            if user.frame < 4:
+                user.image.clip_draw(int(user.frame) * 35, user.action * 40, 35, 38, user.x, user.y, user.size,
+                                     user.size)
+            else:
+                user.image.clip_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 38, user.x, user.y, user.size, user.size)
+        elif user.dir == 1:
+            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
+                                           user.size, user.size)
+        pass
+
+    pass
+
+
 class StateMachine:
     def __init__(self, user):
         self.user = user
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, above_down: Run, above_up: Run,
-                   under_down: Run, under_up: Run, s_down: Idle, time_out: Idle},
+                   under_down: Run, under_up: Run, s_down: Idle, time_out: Idle, d_down: Shoot},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, above_down: Run, above_up: Run,
-                  under_down: Run, under_up: Run, s_down: Run, time_out: Run, change_idle: Idle}
+                  under_down: Run, under_up: Run, s_down: Run, time_out: Run, change_idle: Idle, d_down: Shoot},
+            Shoot: {shooting_end: Idle, s_down: Shoot, time_out: Shoot}
         }
+
     def start(self):
         self.cur_state.enter(self.user, ('START', 0))
 
@@ -287,6 +362,16 @@ class User:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+
+        # draw_rectangle(175, 425, 175 + 25, 425 + 25)
+        # draw_rectangle(175, 375, 175 + 25, 375 + 25)
+        # draw_rectangle(175, 325, 175 + 25, 325 + 25)
+        # draw_rectangle(160, 300, 160 + 50, 300 + 170)
+        #
+        # draw_rectangle(1000, 425, 1000 + 25, 425 + 25)
+        # draw_rectangle(1000, 375, 1000 + 25, 375 + 25)
+        # draw_rectangle(1000, 325, 1000 + 25, 325 + 25)
+        # draw_rectangle(985, 300, 985 + 50, 300 + 170)
 
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
