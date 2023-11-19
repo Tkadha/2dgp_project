@@ -251,7 +251,7 @@ class Shoot:
     @staticmethod
     def exit(user, e):
         print('shooting end')
-        user.shooting=True
+        user.shooting = True
         if s_down(e) and user.skill_onoff == 'off':
             if user.skill == 'SizeUp':
                 user.size *= 2
@@ -394,17 +394,23 @@ class User:
                 other.x = self.x - other.size
                 other.y = self.y - other.size
             if self.shooting:
-                x1, y1 = self.x + self.bounding_box_size, self.y
-                x2, y2 = 1000, 475 - random.randint(1, 3) * 50
+                x1, y1 = other.x, other.y
+                x2, y2 = 1000, 475
                 t = 50 / 100
                 other.x_velocity = (1 - t) * x1 + t * x2
                 other.y_velocity = (1 - t) * y1 + t * y2
+                if y1 > y2:
+                    other.y_velocity *= -1
                 # while -1 < other.x_velocity < 1 and -1 < other.y_velocity < 1:
                 other.y_velocity /= 80
                 other.x_velocity /= 80
                 #     pass
-                other.x += other.x_velocity*10 * 100 * game_framework.frame_time
-                other.y += other.y_velocity*10 * 100 * game_framework.frame_time
+                if self.dir==0:
+                    other.x += other.x_velocity * 10 * 100 * game_framework.frame_time
+                    other.y += other.y_velocity * 10 * 100 * game_framework.frame_time
+                else:
+                    other.x += other.x_velocity * 30 * 100 * game_framework.frame_time
+                    other.y += other.y_velocity * 30 * 100 * game_framework.frame_time
                 print(f"{other.x_velocity}  {other.y_velocity}")
                 print(f"{other.x}  {other.y}")
                 print(f"{self.x}  {self.y}")

@@ -11,8 +11,8 @@ class Puck:
             Puck.image = load_image('./resource/hockeypuck.png')
         self.x = 600
         self.y = 375
-        self.x_velocity = 3
-        self.y_velocity = 5
+        self.x_velocity = 0
+        self.y_velocity = 0
         self.size = 25
         self.bounding_box_size = self.size / 2
 
@@ -40,7 +40,18 @@ class Puck:
                 self.x_velocity *= -1
             if self.y - self.bounding_box_size <= 50:
                 self.y_velocity *= -1
-            elif self.y + self.bounding_box_size>= 700:
+            elif self.y + self.bounding_box_size >= 700:
+                self.y_velocity *= -1
+            pass
+        if group == 'puck:post':
+            left_post, bottom_post, right_post, top_post = other.get_bb()
+            if self.x - self.bounding_box_size <= left_post:
+                self.x_velocity *= -1
+            elif self.x + self.bounding_box_size >= right_post:
+                self.x_velocity *= -1
+            if self.y - self.bounding_box_size <= bottom_post:
+                self.y_velocity *= -1
+            elif self.y + self.bounding_box_size >= top_post:
                 self.y_velocity *= -1
             pass
 
