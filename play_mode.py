@@ -6,6 +6,8 @@ from user_hockey_player import User
 from field import Field
 from hockeypuck import Puck
 from ai import Ai
+from our_goalpost import Our_Goalpost
+from enemy_goalpost import Enemy_Goalpost
 
 # Game object class here
 
@@ -30,21 +32,31 @@ def init():
     global user
     global puck
     global ai
+    global our_goalpost
+    global enemy_goalpost
     running = True
     world = []
 
     field = Field()
     game_world.add_object(field, 0)
+    our_goalpost = Our_Goalpost()
+    enemy_goalpost = Enemy_Goalpost()
+    game_world.add_object(our_goalpost, 0)
+    game_world.add_object(enemy_goalpost, 0)
+
     user = User('red')
     game_world.add_object(user, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
+
     ai=Ai(800, 300, 'yellow')
     game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
     game_world.add_collision_pair('user:field', user, field)
     game_world.add_collision_pair('puck:field', puck, field)
+    game_world.add_collision_pair('puck:post', puck, our_goalpost)
+    game_world.add_collision_pair('puck:post', None, enemy_goalpost)
 
 
 def update():
