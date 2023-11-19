@@ -32,13 +32,6 @@ class Puck:
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
-            if other.dir == 0:
-                self.x = other.x + self.size
-                self.y = other.y - self.size
-                pass
-            elif other.dir == 1:
-                self.x = other.x - self.size
-                self.y = other.y - self.size
                 pass
         if group == 'puck:field':
             if self.x - self.bounding_box_size <= 100:

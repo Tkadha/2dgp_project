@@ -1,4 +1,5 @@
 # 이것은 각 상태들을 객체로 구현한 것임.
+import random
 
 from pico2d import load_image, SDL_KEYDOWN, SDL_KEYUP, SDLK_LEFT, SDLK_RIGHT, SDLK_UP, SDLK_DOWN, SDLK_s, \
     draw_rectangle, get_time
@@ -74,6 +75,7 @@ class Idle:
     def enter(user, e):
         user.action = 3
         user.frame = 0
+        user.key_down_count = 0
         user.LR_way, user.UD_way = 0, 0
         user.RUN_SPEED_KMPH = 5.0  # Km / Hour
         if time_out(e):
@@ -249,6 +251,7 @@ class Shoot:
     @staticmethod
     def exit(user, e):
         print('shooting end')
+        user.shooting=True
         if s_down(e) and user.skill_onoff == 'off':
             if user.skill == 'SizeUp':
                 user.size *= 2
@@ -265,7 +268,8 @@ class Shoot:
     def do(user):
         if user.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
             user.state_machine.handle_event(('SHOOTING_END', 0))
-        user.frame = (user.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+        user.frame = (
+                             user.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         if user.skill_onoff == 'on':
             if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
@@ -279,7 +283,8 @@ class Shoot:
                 user.image.clip_draw(int(user.frame) * 35, user.action * 40, 35, 38, user.x, user.y, user.size,
                                      user.size)
             else:
-                user.image.clip_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 38, user.x, user.y, user.size, user.size)
+                user.image.clip_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 38, user.x, user.y,
+                                     user.size, user.size)
         elif user.dir == 1:
             user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
                                            user.size, user.size)
@@ -341,6 +346,7 @@ class User:
         self.key_down_count = 0
         self.size = 75
         self.bounding_box_size = 25
+        self.shooting = False
         self.skill = 'SizeUp'
         self.skill_time = get_time()
         self.skill_onoff = 'off'
@@ -378,6 +384,31 @@ class User:
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
+            other.x_velocity = 0
+            other.y_velocity = 0
+            if self.dir == 0:
+                other.x = self.x + other.size
+                other.y = self.y - other.size
+                pass
+            elif self.dir == 1:
+                other.x = self.x - other.size
+                other.y = self.y - other.size
+            if self.shooting:
+                x1, y1 = self.x + self.bounding_box_size, self.y
+                x2, y2 = 1000, 475 - random.randint(1, 3) * 50
+                t = 50 / 100
+                other.x_velocity = (1 - t) * x1 + t * x2
+                other.y_velocity = (1 - t) * y1 + t * y2
+                # while -1 < other.x_velocity < 1 and -1 < other.y_velocity < 1:
+                other.y_velocity /= 80
+                other.x_velocity /= 80
+                #     pass
+                other.x += other.x_velocity*10 * 100 * game_framework.frame_time
+                other.y += other.y_velocity*10 * 100 * game_framework.frame_time
+                print(f"{other.x_velocity}  {other.y_velocity}")
+                print(f"{other.x}  {other.y}")
+                print(f"{self.x}  {self.y}")
+                self.shooting = False
             pass
         if group == 'user:field':
             if self.x - self.bounding_box_size <= 100:
