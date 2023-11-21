@@ -369,16 +369,6 @@ class User:
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
 
-        # draw_rectangle(175, 425, 175 + 25, 425 + 25)
-        # draw_rectangle(175, 375, 175 + 25, 375 + 25)
-        # draw_rectangle(175, 325, 175 + 25, 325 + 25)
-        # draw_rectangle(160, 300, 160 + 50, 300 + 170)
-        #
-        # draw_rectangle(1000, 425, 1000 + 25, 425 + 25)
-        # draw_rectangle(1000, 375, 1000 + 25, 375 + 25)
-        # draw_rectangle(1000, 325, 1000 + 25, 325 + 25)
-        # draw_rectangle(985, 300, 985 + 50, 300 + 170)
-
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
 
@@ -395,25 +385,18 @@ class User:
                 other.y = self.y - other.size
             if self.shooting:
                 x1, y1 = other.x, other.y
-                x2, y2 = 1000, 475
-                t = 50 / 100
-                other.x_velocity = (1 - t) * x1 + t * x2
-                other.y_velocity = (1 - t) * y1 + t * y2
-                if y1 > y2:
-                    other.y_velocity *= -1
-                # while -1 < other.x_velocity < 1 and -1 < other.y_velocity < 1:
-                other.y_velocity /= 80
-                other.x_velocity /= 80
+                x2, y2 = 1000, random.randint(300+25,470-20)
+                other.x_velocity = x2 - x1
+                other.y_velocity = y2 - y1
+                other.x_velocity /= 50
+                other.y_velocity /= 50
                 #     pass
-                if self.dir==0:
-                    other.x += other.x_velocity * 10 * 100 * game_framework.frame_time
-                    other.y += other.y_velocity * 10 * 100 * game_framework.frame_time
+                if self.dir == 0:
+                    other.x += other.x_velocity * 20 * 100 * game_framework.frame_time
+                    other.y += other.y_velocity * 20 * 100 * game_framework.frame_time
                 else:
-                    other.x += other.x_velocity * 30 * 100 * game_framework.frame_time
-                    other.y += other.y_velocity * 30 * 100 * game_framework.frame_time
-                print(f"{other.x_velocity}  {other.y_velocity}")
-                print(f"{other.x}  {other.y}")
-                print(f"{self.x}  {self.y}")
+                    other.x += other.x_velocity * 40 * 100 * game_framework.frame_time
+                    other.y += other.y_velocity * 40 * 100 * game_framework.frame_time
                 self.shooting = False
             pass
         if group == 'user:field':
