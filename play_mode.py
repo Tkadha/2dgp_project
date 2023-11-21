@@ -9,6 +9,7 @@ from ai import Ai
 from our_goalpost import Our_Goalpost
 from enemy_goalpost import Enemy_Goalpost
 
+
 # Game object class here
 
 
@@ -46,10 +47,18 @@ def init():
 
     user = User('red')
     game_world.add_object(user, 2)
+    ai = Ai(350, 550, 0, 'red')
+    game_world.add_object(ai, 2)
+    ai = Ai(350, 250, 0, 'red')
+    game_world.add_object(ai, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
 
-    ai=Ai(800, 300, 'yellow')
+    ai = Ai(850, 550, 1, 'yellow')
+    game_world.add_object(ai, 2)
+    ai = Ai(700, 400, 1, 'yellow')
+    game_world.add_object(ai, 2)
+    ai = Ai(850, 250, 1, 'yellow')
     game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
