@@ -25,11 +25,11 @@ class Ai:
             elif image == 'red':
                 self.image = load_image('./resource/red_hockey.png')
 
-    def __init__(self, x=None, y=None, image=None):
+    def __init__(self, x=None, y=None, LR=None, image=None):
         self.x, self.y = x, y
         self.frame = 0
         self.action = 3
-        self.dir = 1
+        self.dir = LR
         self.face_dir = 1
         self.size = 75
         self.bounding_box_size = 25
