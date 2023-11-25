@@ -26,6 +26,14 @@ def handle_events():
             user.handle_event(event)
 
 
+def select_team(l, r):
+    global left
+    global right
+    left = l
+    right = r
+    pass
+
+
 def init():
     global running
     global world
@@ -35,6 +43,8 @@ def init():
     global ai
     global our_goalpost
     global enemy_goalpost
+    global left
+    global right
     running = True
     world = []
 
@@ -45,20 +55,20 @@ def init():
     game_world.add_object(our_goalpost, 0)
     game_world.add_object(enemy_goalpost, 0)
 
-    user = User('red')
+    user = User(left)
     game_world.add_object(user, 2)
-    ai = Ai(350, 550, 0, 'red')
+    ai = Ai(350, 550, 0, left)
     game_world.add_object(ai, 2)
-    ai = Ai(350, 250, 0, 'red')
+    ai = Ai(350, 250, 0, left)
     game_world.add_object(ai, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
 
-    ai = Ai(850, 550, 1, 'yellow')
+    ai = Ai(850, 550, 1, right)
     game_world.add_object(ai, 2)
-    ai = Ai(700, 400, 1, 'yellow')
+    ai = Ai(700, 400, 1, right)
     game_world.add_object(ai, 2)
-    ai = Ai(850, 250, 1, 'yellow')
+    ai = Ai(850, 250, 1, right)
     game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
