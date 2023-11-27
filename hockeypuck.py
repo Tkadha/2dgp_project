@@ -1,6 +1,8 @@
 import random
 
 from pico2d import *
+
+import field
 import game_world
 import game_framework
 
@@ -17,6 +19,7 @@ class Puck:
         self.y_velocity = 0
         self.size = 25
         self.bounding_box_size = self.size / 2
+
 
     def draw(self):
         self.image.clip_draw(0, 0, 100, 75, self.x, self.y, self.size, self.size)
@@ -51,7 +54,6 @@ class Puck:
                 self.y_velocity = y2 - y1
                 self.x_velocity /= 150
                 self.y_velocity /= 150
-                print(f"{self.x_velocity, self.y_velocity}")
                 if self.x_velocity > 20:
                     self.x_velocity /= 4
                     self.y_velocity /= 4
@@ -74,7 +76,7 @@ class Puck:
                 pass
         if group == 'puck:field':
             if self.x - self.bounding_box_size <= 100:
-                self.x=110
+                self.x = 110
                 self.x_velocity *= -1
             elif self.x + self.bounding_box_size >= 1100:
                 self.x = 1090
@@ -88,16 +90,30 @@ class Puck:
             pass
         if group == 'puck:post':
             left_post, bottom_post, right_post, top_post = other.get_bb()
-            if self.x - self.bounding_box_size <= left_post:
-                self.x_velocity *= -1
-            elif self.x + self.bounding_box_size >= right_post:
-                self.x_velocity *= -1
-            if self.y - self.bounding_box_size <= bottom_post:
-                self.y_velocity *= -1
-            elif self.y + self.bounding_box_size >= top_post:
-                self.y_velocity *= -1
-
-
-
+            if left_post < 600:  # 왼쪽 골대
+                if self.x - self.bounding_box_size <= left_post:
+                    self.x_velocity *= -1
+                elif self.x + self.bounding_box_size >= right_post:
+                    other.left_score_up()
+                    self.x = 600
+                    self.y = 375
+                    self.x_velocity = 0
+                    self.y_velocity = 0
+                if self.y - self.bounding_box_size <= bottom_post:
+                    self.y_velocity *= -1
+                elif self.y + self.bounding_box_size >= top_post:
+                    self.y_velocity *= -1
+            else:
+                if self.x - self.bounding_box_size <= left_post:
+                    other.right_score_up()
+                    self.x = 600
+                    self.y = 375
+                    self.x_velocity = 0
+                    self.y_velocity = 0
+                elif self.x + self.bounding_box_size >= right_post:
+                    self.x_velocity *= -1
+                if self.y - self.bounding_box_size <= bottom_post:
+                    self.y_velocity *= -1
+                elif self.y + self.bounding_box_size >= top_post:
+                    self.y_velocity *= -1
             pass
-
