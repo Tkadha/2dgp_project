@@ -13,7 +13,6 @@ from enemy_goalpost import Enemy_Goalpost
 
 # Game object class here
 
-
 def handle_events():
     global running
 
@@ -77,6 +76,8 @@ def init():
     game_world.add_collision_pair('puck:field', puck, field)
     game_world.add_collision_pair('puck:post', puck, our_goalpost)
     game_world.add_collision_pair('puck:post', None, enemy_goalpost)
+    game_world.add_collision_pair('user:post', user, our_goalpost)
+    game_world.add_collision_pair('user:post', None, enemy_goalpost)
 
 
 def update():
@@ -91,6 +92,9 @@ def draw():
 
 
 def finish():
+    for layer in game_world.objects:
+        for o in layer:
+            layer.remove(o)
     pass
 
 

@@ -385,6 +385,18 @@ class User:
             elif self.y >= 700:
                 self.y = 700
             pass
+        if group == 'user:post':
+            if 0 + 50 <= self.x <= 1200 - 50:
+                if self.LR_way == 1:
+                    self.x -= self.RUN_SPEED_PPS * game_framework.frame_time
+                elif self.LR_way == 2:
+                    self.x += self.RUN_SPEED_PPS * game_framework.frame_time
+            if 0 <= self.y <= 800:
+                if self.UD_way == 1:
+                    self.y += self.RUN_SPEED_PPS * game_framework.frame_time / 2
+                elif self.UD_way == 2:
+                    self.y -= self.RUN_SPEED_PPS * game_framework.frame_time / 2
+            pass
 
 
 def check_out_field(user):
