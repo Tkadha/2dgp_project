@@ -49,18 +49,25 @@ class Puck:
                 x2, y2 = 1000, random.randint(300 + 25, 470 - 20)
                 self.x_velocity = x2 - x1
                 self.y_velocity = y2 - y1
-                self.x_velocity /= 100
-                self.y_velocity /= 100
-                if self.x_velocity < 10:
+                self.x_velocity /= 150
+                self.y_velocity /= 150
+                print(f"{self.x_velocity, self.y_velocity}")
+                if self.x_velocity > 20:
+                    self.x_velocity /= 4
+                    self.y_velocity /= 4
+                elif self.x_velocity > 10:
+                    self.x_velocity /= 2
+                    self.y_velocity /= 2
+                elif self.x_velocity < 10:
                     self.x_velocity *= 2
                     self.y_velocity *= 2
                 #     pass
                 if other.dir == 0:
-                    self.x += self.x_velocity * 20 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 20 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 40 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 40 * 100 * game_framework.frame_time
                 else:
-                    self.x += self.x_velocity * 30 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 30 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 50 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
                 other.shooting = False
                 other.contact_puck = False
                 print(f"{self.x_velocity, self.y_velocity}")
@@ -89,5 +96,8 @@ class Puck:
                 self.y_velocity *= -1
             elif self.y + self.bounding_box_size >= top_post:
                 self.y_velocity *= -1
+
+
+
             pass
 
