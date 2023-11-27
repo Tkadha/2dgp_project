@@ -1,3 +1,5 @@
+import random
+
 from pico2d import *
 import game_world
 import game_framework
@@ -32,6 +34,36 @@ class Puck:
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
+            other.contact_puck = True
+            self.x_velocity = 0
+            self.y_velocity = 0
+            if other.dir == 0:
+                self.x = other.x + self.size
+                self.y = other.y - self.size
+                pass
+            elif other.dir == 1:
+                self.x = other.x - self.size
+                self.y = other.y - self.size
+            if other.shooting:
+                x1, y1 = self.x, self.y
+                x2, y2 = 1000, random.randint(300 + 25, 470 - 20)
+                self.x_velocity = x2 - x1
+                self.y_velocity = y2 - y1
+                self.x_velocity /= 100
+                self.y_velocity /= 100
+                if self.x_velocity < 10:
+                    self.x_velocity *= 2
+                    self.y_velocity *= 2
+                #     pass
+                if other.dir == 0:
+                    self.x += self.x_velocity * 20 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 20 * 100 * game_framework.frame_time
+                else:
+                    self.x += self.x_velocity * 30 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 30 * 100 * game_framework.frame_time
+                other.shooting = False
+                other.contact_puck = False
+                print(f"{self.x_velocity, self.y_velocity}")
                 pass
         if group == 'puck:field':
             if self.x - self.bounding_box_size <= 100:

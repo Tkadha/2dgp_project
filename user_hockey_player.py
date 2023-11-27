@@ -374,36 +374,6 @@ class User:
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
-            self.contact_puck = True
-            other.x_velocity = 0
-            other.y_velocity = 0
-            if self.dir == 0:
-                other.x = self.x + other.size
-                other.y = self.y - other.size
-                pass
-            elif self.dir == 1:
-                other.x = self.x - other.size
-                other.y = self.y - other.size
-            if self.shooting:
-                x1, y1 = other.x, other.y
-                x2, y2 = 1000, random.randint(300 + 25, 470 - 20)
-                other.x_velocity = x2 - x1
-                other.y_velocity = y2 - y1
-                other.x_velocity /= 50
-                other.y_velocity /= 50
-                if other.x_velocity < 10:
-                    other.x_velocity *= 2
-                    other.y_velocity *= 2
-                #     pass
-                if self.dir == 0:
-                    other.x += other.x_velocity * 20 * 100 * game_framework.frame_time
-                    other.y += other.y_velocity * 20 * 100 * game_framework.frame_time
-                else:
-                    other.x += other.x_velocity * 30 * 100 * game_framework.frame_time
-                    other.y += other.y_velocity * 30 * 100 * game_framework.frame_time
-                self.shooting = False
-                self.contact_puck = False
-                print(f"{other.x_velocity, other.y_velocity}")
             pass
         if group == 'user:field':
             if self.x - self.bounding_box_size <= 100:
