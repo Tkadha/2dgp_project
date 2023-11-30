@@ -52,3 +52,28 @@ class Ai:
 
     def handle_event(self, event):
         pass
+
+
+    def is_have_puck(self):
+        pass
+
+    def is_near_post(self, r):
+        pass
+
+    def shoot_puck(self, r):
+        pass
+
+
+    def is_near_enemy(self, r):
+        pass
+
+    def move_forward(self):
+        pass
+
+    def avoid_enemy(self):
+        pass
+
+    def move_to_the_ball(self):
+        pass
+
+
