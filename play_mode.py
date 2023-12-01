@@ -57,18 +57,10 @@ def init():
 
     user = User(left)
     game_world.add_object(user, 2)
-    ai = Ai(350, 550, 0, left)
-    game_world.add_object(ai, 2)
-    ai = Ai(350, 250, 0, left)
-    game_world.add_object(ai, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
 
-    ai = Ai(850, 550, 1, right)
-    game_world.add_object(ai, 2)
     ai = Ai(700, 400, 1, right)
-    game_world.add_object(ai, 2)
-    ai = Ai(850, 250, 1, right)
     game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
