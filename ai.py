@@ -104,6 +104,12 @@ class Ai:
         self.speed = self.RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time / 2
+        if math.cos(self.dir) > 0:
+            self.face_dir=0
+            pass
+        else:
+            self.face_dir=1
+            pass
 
     def is_have_puck(self):
 
