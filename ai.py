@@ -5,7 +5,7 @@ from pico2d import load_image, draw_rectangle
 import game_framework
 import game_world
 import play_mode
-from behavior_tree import BehaviorTree, Action, Condition, Sequence
+from behavior_tree import BehaviorTree, Action, Condition, Sequence, Selector
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 
@@ -43,21 +43,22 @@ class Ai:
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.speed = self.RUN_SPEED_PPS
         self.state = 'IDLE'
+        self.have_puck = False
         self.build_behavior_tree()
 
     def update(self):
         if self.state == 'IDLE':
             self.action = 3
             self.frame = (
-                                     self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+                                 self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
         elif self.state == 'RUN':
             self.action = 2
             self.frame = (
-                                     self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
+                                 self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         elif self.state == 'SHOOT':
             self.action = 1
             self.frame = (
-                                     self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+                                 self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         self.bt.run()
         pass
 
@@ -95,6 +96,11 @@ class Ai:
     def handle_event(self, event):
         pass
 
+    def handle_collision(self, group, other):
+        if group == 'ai:puck':
+            self.have_puck = True
+        pass
+
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
@@ -105,34 +111,48 @@ class Ai:
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time / 2
         if math.cos(self.dir) > 0:
-            self.face_dir=0
-            pass
+            self.face_dir = 0
         else:
-            self.face_dir=1
-            pass
+            self.face_dir = 1
 
     def is_have_puck(self):
-
-        pass
+        if self.have_puck:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
 
     def is_near_post(self, r):
-
+        for o in game_world.objects[0]:
+            if o == play_mode.our_goalpost:
+                px, py = o.x, o.y
+                break
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
         pass
 
     def shoot_puck(self, r):
 
+        self.have_puck = False
         pass
 
     def is_near_enemy(self, r):
 
         pass
 
-    def move_forward(self):
-
+    def move_forward(self, r=0.5):
+        for o in game_world.objects[0]:
+            if o == play_mode.our_goalpost:
+                px, py = o.x, o.y + 60
+        self.move_slightly_to(px, py)
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
         pass
 
     def avoid_enemy(self):
-
         pass
 
     def is_near_puck(self, r):
@@ -157,7 +177,12 @@ class Ai:
 
     def build_behavior_tree(self):
         a1 = Action('Move to puck', self.move_to_the_puck)
-        c1 = Condition('근처에 공이 있는가',self.is_near_puck,20)
-        root = Sequence('공을 추적',c1,a1)
+        c1 = Condition('근처에 공이 있는가', self.is_near_puck, 20)
+        root = SEQ_move_to_puck = Sequence('공을 추적', c1, a1)
+
+        a2 = Action('Move to forward', self.move_forward)
+        c2 = Condition('공을 가지고 있는가', self.is_have_puck)
+        root = SEQ_move_forward = Sequence("전진", c2, a2)
+        root = Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
         self.bt = BehaviorTree(root)
         pass
