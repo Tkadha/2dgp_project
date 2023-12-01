@@ -285,8 +285,13 @@ class Shoot:
                 user.image.clip_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 38, user.x, user.y,
                                      user.size, user.size)
         elif user.dir == 1:
-            user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
-                                           user.size, user.size)
+            if user.frame < 4:
+                user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
+                                            user.size, user.size)
+            else:
+                user.image.clip_composite_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
+                                            user.size, user.size)
+
         pass
 
     pass
