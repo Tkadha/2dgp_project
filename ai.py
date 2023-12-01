@@ -3,6 +3,9 @@ import math
 from pico2d import load_image, draw_rectangle
 
 import game_framework
+import game_world
+import play_mode
+from behavior_tree import BehaviorTree, Action, Condition, Sequence
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 
@@ -36,37 +39,45 @@ class Ai:
         self.load_image(image)
         self.max_speed = 100
         self.speed_increase = 0.1
-        self.RUN_SPEED_KMPH = 5.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 15.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.speed = self.RUN_SPEED_PPS
         self.state = 'IDLE'
+        self.build_behavior_tree()
 
     def update(self):
         if self.state == 'IDLE':
-            self.frame = (self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
-        elif self.state =='RUN':
-            self.frame = (self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
-        elif self.state =='SHOOT':
-            self.frame = (self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+            self.action = 3
+            self.frame = (
+                                     self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+        elif self.state == 'RUN':
+            self.action = 2
+            self.frame = (
+                                     self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
+        elif self.state == 'SHOOT':
+            self.action = 1
+            self.frame = (
+                                     self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+        self.bt.run()
         pass
 
     def draw(self):
         if self.state == 'IDLE' or 'RUN':
-            if self.dir == 0:
+            if self.face_dir == 0:
                 self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 40, self.x, self.y, self.size,
                                      self.size)
-            elif self.dir == 1:
+            elif self.face_dir == 1:
                 self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x, self.y,
                                                self.size, self.size)
         elif self.state == 'SHOOT':
-            if self.dir == 0:
+            if self.face_dir == 0:
                 if self.frame < 4:
                     self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 38, self.x, self.y, self.size,
                                          self.size)
                 else:
                     self.image.clip_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 38, self.x, self.y,
                                          self.size, self.size)
-            elif self.dir == 1:
+            elif self.face_dir == 1:
                 if self.frame < 4:
                     self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x,
                                                    self.y,
@@ -95,22 +106,52 @@ class Ai:
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time / 2
 
     def is_have_puck(self):
+
         pass
 
     def is_near_post(self, r):
+
         pass
 
     def shoot_puck(self, r):
+
         pass
 
     def is_near_enemy(self, r):
+
         pass
 
     def move_forward(self):
+
         pass
 
     def avoid_enemy(self):
+
         pass
 
-    def move_to_the_ball(self):
+    def is_near_puck(self, r):
+        for puck in game_world.objects[1]:
+            px, py = puck.x, puck.y
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+        pass
+
+    def move_to_the_puck(self, r=0.5):
+        self.state = 'RUN'
+        for puck in game_world.objects[1]:
+            px, py = puck.x, puck.y
+        self.move_slightly_to(px, py)
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+        pass
+
+    def build_behavior_tree(self):
+        a1 = Action('Move to puck', self.move_to_the_puck)
+        c1 = Condition('근처에 공이 있는가',self.is_near_puck,20)
+        root = Sequence('공을 추적',c1,a1)
+        self.bt = BehaviorTree(root)
         pass
