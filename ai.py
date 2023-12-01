@@ -1,3 +1,5 @@
+import math
+
 from pico2d import load_image, draw_rectangle
 
 import game_framework
@@ -8,9 +10,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 IDLE_FRAMES_PER_ACTION = 2
 RUN_FRAMES_PER_ACTION = 4
-
-RUN_SPEED_KMPH = 5.0  # Km / Hour
-RUN_SPEED_PPS = (((RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+SHOOT_FRAMES_PER_ACTION = 6
 
 
 class Ai:
@@ -34,17 +34,48 @@ class Ai:
         self.size = 75
         self.bounding_box_size = 25
         self.load_image(image)
+        self.max_speed = 100
+        self.speed_increase = 0.1
+        self.RUN_SPEED_KMPH = 5.0  # Km / Hour
+        self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+        self.speed = self.RUN_SPEED_PPS
+        self.state = 'IDLE'
 
     def update(self):
-        self.frame = (self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+        if self.state == 'IDLE':
+            self.frame = (self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+        elif self.state =='RUN':
+            self.frame = (self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
+        elif self.state =='SHOOT':
+            self.frame = (self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         pass
 
     def draw(self):
-        if self.dir == 0:
-            self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 40, self.x, self.y, self.size, self.size)
-        elif self.dir == 1:
-            self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x, self.y,
-                                           self.size, self.size)
+        if self.state == 'IDLE' or 'RUN':
+            if self.dir == 0:
+                self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 40, self.x, self.y, self.size,
+                                     self.size)
+            elif self.dir == 1:
+                self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x, self.y,
+                                               self.size, self.size)
+        elif self.state == 'SHOOT':
+            if self.dir == 0:
+                if self.frame < 4:
+                    self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 38, self.x, self.y, self.size,
+                                         self.size)
+                else:
+                    self.image.clip_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 38, self.x, self.y,
+                                         self.size, self.size)
+            elif self.dir == 1:
+                if self.frame < 4:
+                    self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x,
+                                                   self.y,
+                                                   self.size, self.size)
+                else:
+                    self.image.clip_composite_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 40, 0, 'h',
+                                                   self.x, self.y,
+                                                   self.size, self.size)
+            pass
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
@@ -53,6 +84,15 @@ class Ai:
     def handle_event(self, event):
         pass
 
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = self.RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time / 2
 
     def is_have_puck(self):
         pass
@@ -62,7 +102,6 @@ class Ai:
 
     def shoot_puck(self, r):
         pass
-
 
     def is_near_enemy(self, r):
         pass
@@ -75,5 +114,3 @@ class Ai:
 
     def move_to_the_ball(self):
         pass
-
-
