@@ -5,6 +5,8 @@ class Our_Goalpost:
     def __init__(self):
         self.font = load_font('ENCR10B.TTF', 40)
         self.left_score = 0
+        self.x=160
+        self.y=300
         pass
 
     def draw(self):
@@ -18,7 +20,7 @@ class Our_Goalpost:
         pass
 
     def get_bb(self):
-        return 160, 300, 160 + 40, 300 + 170
+        return self.x, self.y, self.x + 40, self.y + 170
 
     def handle_collision(self, group, other):
         pass
