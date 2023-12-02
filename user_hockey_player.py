@@ -341,7 +341,7 @@ class User:
                 self.image = load_image('./resource/red_hockey.png')
 
     def __init__(self, image=None):
-        self.x, self.y = 500, 400
+        self.x, self.y = 400, 400
         self.frame = 0
         self.dir = 0
         self.action = 3
