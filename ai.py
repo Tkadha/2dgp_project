@@ -37,9 +37,7 @@ class Ai:
         self.size = 75
         self.bounding_box_size = 25
         self.load_image(image)
-        self.max_speed = 100
-        self.speed_increase = 0.1
-        self.RUN_SPEED_KMPH = 15.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.speed = self.RUN_SPEED_PPS
         self.state = 'IDLE'

@@ -77,18 +77,11 @@ class Idle:
         user.frame = 0
         user.key_down_count = 0
         user.LR_way, user.UD_way = 0, 0
-        user.RUN_SPEED_KMPH = 5.0  # Km / Hour
+        user.RUN_SPEED_KMPH = 20.0  # Km / Hour
         if time_out(e):
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 100 - 0.1
-                user.speed_increase = 0.1
-                if user.RUN_SPEED_KMPH > user.max_speed:
-                    user.RUN_SPEED_KMPH = user.max_speed
-                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
-                pass
         pass
 
     @staticmethod
@@ -97,9 +90,6 @@ class Idle:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 150
-                user.speed_increase = 0.5
                 pass
             user.skill_onoff = 'on'
             user.skill_time = get_time()
@@ -124,8 +114,6 @@ class Idle:
                                            user.size,
                                            user.size)
         pass
-
-
 class Run:
 
     @staticmethod
@@ -151,13 +139,6 @@ class Run:
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 100
-                user.speed_increase = 0.1
-                if user.RUN_SPEED_KMPH > user.max_speed:
-                    user.RUN_SPEED_KMPH = user.max_speed
-                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
-                pass
         pass
 
     @staticmethod
@@ -166,10 +147,6 @@ class Run:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 150
-                user.speed_increase = 0.5
-                pass
             user.skill_onoff = 'on'
             user.skill_time = get_time()
 
@@ -202,15 +179,12 @@ class Run:
                 user.x -= user.RUN_SPEED_PPS * game_framework.frame_time
         if 0 <= user.y <= 800:
             if user.UD_way == 1:
-                user.y -= user.RUN_SPEED_PPS * game_framework.frame_time / 2
+                user.y -= user.RUN_SPEED_PPS * game_framework.frame_time
             elif user.UD_way == 2:
-                user.y += user.RUN_SPEED_PPS * game_framework.frame_time / 2
+                user.y += user.RUN_SPEED_PPS * game_framework.frame_time
 
         check_out_field(user)
 
-        if user.RUN_SPEED_KMPH < user.max_speed:
-            user.RUN_SPEED_KMPH += user.speed_increase
-            user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         if user.skill_onoff == 'on':
             if get_time() - user.skill_time > 3:
                 user.skill_onoff = 'off'
@@ -238,13 +212,6 @@ class Shoot:
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 100
-                user.speed_increase = 0.1
-                if user.RUN_SPEED_KMPH > user.max_speed:
-                    user.RUN_SPEED_KMPH = user.max_speed
-                    user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
-                pass
         pass
 
     @staticmethod
@@ -255,10 +222,6 @@ class Shoot:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-            elif user.skill == 'SpeedUp':
-                user.max_speed = 150
-                user.speed_increase = 0.5
-                pass
             user.skill_onoff = 'on'
             user.skill_time = get_time()
         pass
@@ -355,9 +318,7 @@ class User:
         self.skill = 'SizeUp'
         self.skill_time = get_time()
         self.skill_onoff = 'off'
-        self.max_speed = 100
-        self.speed_increase = 0.1
-        self.RUN_SPEED_KMPH = 5.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.load_image(image)
         self.state_machine = StateMachine(self)
@@ -398,9 +359,9 @@ class User:
                     self.x += self.RUN_SPEED_PPS * game_framework.frame_time
             if 0 <= self.y <= 800:
                 if self.UD_way == 1:
-                    self.y += self.RUN_SPEED_PPS * game_framework.frame_time / 2
+                    self.y += self.RUN_SPEED_PPS * game_framework.frame_time
                 elif self.UD_way == 2:
-                    self.y -= self.RUN_SPEED_PPS * game_framework.frame_time / 2
+                    self.y -= self.RUN_SPEED_PPS * game_framework.frame_time
             pass
 
 
