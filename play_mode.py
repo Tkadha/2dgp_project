@@ -60,16 +60,20 @@ def init():
     puck = Puck()
     game_world.add_object(puck, 1)
 
-    ai = Ai(700, 400, 1, right)
+    ai = Ai(800, 400, 1, right)
     game_world.add_object(ai, 2)
 
     game_world.add_collision_pair('user:puck', user, puck)
+    game_world.add_collision_pair('ai:puck', ai, puck)
     game_world.add_collision_pair('user:field', user, field)
     game_world.add_collision_pair('puck:field', puck, field)
     game_world.add_collision_pair('puck:post', puck, our_goalpost)
     game_world.add_collision_pair('puck:post', None, enemy_goalpost)
     game_world.add_collision_pair('user:post', user, our_goalpost)
     game_world.add_collision_pair('user:post', None, enemy_goalpost)
+    game_world.add_collision_pair('ai:field', ai, field)
+    game_world.add_collision_pair('ai:post', ai, our_goalpost)
+    game_world.add_collision_pair('ai:post', None, enemy_goalpost)
 
 
 def update():
