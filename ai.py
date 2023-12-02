@@ -136,10 +136,6 @@ class Ai:
         self.shoot = True
         return BehaviorTree.SUCCESS
 
-    def is_near_enemy(self, r):
-
-        pass
-
     def is_shooting(self):
         if self.shoot:
             if self.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
@@ -159,8 +155,36 @@ class Ai:
         else:
             return BehaviorTree.RUNNING
 
-    def avoid_enemy(self):
+    def is_near_enemy(self, r):
+        for o in game_world.objects[2]:
+            if o == play_mode.user:
+                px, py = o.x, o.y
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+        pass
 
+    def avoid_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = self.RUN_SPEED_PPS
+        self.x -= self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y -= self.speed * math.sin(self.dir) * game_framework.frame_time
+        if math.cos(self.dir) > 0:
+            self.face_dir = 1
+        else:
+            self.face_dir = 0
+
+    def avoid_enemy(self, r = 0.5):
+        self.state = 'RUN'
+        for o in game_world.objects[2]:
+            if o == play_mode.user:
+                px, py = o.x, o.y
+        self.avoid_slightly_to(px, py)
+        if self.distance_less_than(px, py, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
         pass
 
     def is_near_puck(self, r):
@@ -183,6 +207,7 @@ class Ai:
             return BehaviorTree.RUNNING
         pass
 
+
     def build_behavior_tree(self):
         a1 = Action('Move to puck', self.move_to_the_puck)
         c1 = Condition('근처에 공이 있는가', self.is_near_puck, 20)
@@ -190,13 +215,21 @@ class Ai:
 
         a2 = Action('Move to forward', self.move_forward)
         c2 = Condition('공을 가지고 있는가', self.is_have_puck)
-        root = SEQ_move_forward = Sequence("전진", c2, a2)
-        root = SEL_move = Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
         c3 = Condition('골대와 가까운가', self.is_near_post, 8)
         a3 = Action('슛', self.shoot_puck)
         SEQ_shoot = Sequence('shooting', c2, c3, a3)
-        root = Selector('shoot or move', SEQ_shoot, SEL_move)
         a4 = Action('슈팅 중', self.is_shooting)
+
+        c4 = Condition('근처에 적이 있는가',self.is_near_enemy,5)
+        a5 = Action('회피',self.avoid_enemy)
+        a6 = Action('전진',self.move_forward)
+        SEQ_avoid=Sequence('적과 가까우면 피하기',c4,a5)
+        SEL_avoid_or_forward=Selector('회피 또는 전진',SEQ_avoid,a6)
+        SEQ_have_puck=Sequence('공을 가진 채 이동',c2,SEL_avoid_or_forward)
+        root = SEL_move = Selector("공을 가지고 전진 또는 공을 추적", SEQ_have_puck, SEQ_move_to_puck)
         root = Selector('shoot or move', a4, SEQ_shoot, SEL_move)
+
+
+
         self.bt = BehaviorTree(root)
         pass
