@@ -58,7 +58,8 @@ class Ai:
                                  self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         elif self.state == 'SHOOT':
             self.action = 1
-            self.frame = (self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+            self.frame = (
+                                     self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         self.bt.run()
         pass
 
@@ -88,6 +89,7 @@ class Ai:
                                                    self.x, self.y,
                                                    self.size, self.size)
         draw_rectangle(*self.get_bb())
+
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
 
@@ -141,11 +143,11 @@ class Ai:
     def is_shooting(self):
         if self.shoot:
             if self.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
+                self.state = 'IDLE'
                 self.have_puck = False
                 self.shoot = False
-                self.state = 'IDLE'
-            pass
-        pass
+            return BehaviorTree.SUCCESS
+        return BehaviorTree.FAIL
 
     def move_forward(self, r=0.5):
         for o in game_world.objects[0]:
@@ -156,7 +158,6 @@ class Ai:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
-        pass
 
     def avoid_enemy(self):
 
@@ -190,10 +191,12 @@ class Ai:
         a2 = Action('Move to forward', self.move_forward)
         c2 = Condition('공을 가지고 있는가', self.is_have_puck)
         root = SEQ_move_forward = Sequence("전진", c2, a2)
-        root = SEL_move =Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
-        c3 = Condition('골대와 가까운가',self.is_near_post, 10)
-        a3 = Action('슛',self.shoot_puck)
-        SEQ_shoot=Sequence('shooting', c2,c3,a3)
-        root = Selector('shoot or move',SEQ_shoot,SEL_move)
+        root = SEL_move = Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
+        c3 = Condition('골대와 가까운가', self.is_near_post, 8)
+        a3 = Action('슛', self.shoot_puck)
+        SEQ_shoot = Sequence('shooting', c2, c3, a3)
+        root = Selector('shoot or move', SEQ_shoot, SEL_move)
+        a4 = Action('슈팅 중', self.is_shooting)
+        root = Selector('shoot or move', a4, SEQ_shoot, SEL_move)
         self.bt = BehaviorTree(root)
         pass

@@ -5,6 +5,9 @@ from pico2d import *
 import field
 import game_world
 import game_framework
+import play_mode
+
+SHOOT_FRAMES_PER_ACTION = 6
 
 
 class Puck:
@@ -19,7 +22,6 @@ class Puck:
         self.y_velocity = 0
         self.size = 25
         self.bounding_box_size = self.size / 2
-
 
     def draw(self):
         self.image.clip_draw(0, 0, 100, 75, self.x, self.y, self.size, self.size)
@@ -37,6 +39,9 @@ class Puck:
 
     def handle_collision(self, group, other):
         if group == 'user:puck':
+            for o in game_world.objects[2]:
+                if o == play_mode.ai:
+                    o.have_puck = False
             other.contact_puck = True
             self.x_velocity = 0
             self.y_velocity = 0
@@ -103,6 +108,9 @@ class Puck:
                     self.y = 375
                     self.x_velocity = 0
                     self.y_velocity = 0
+                    for o in game_world.objects[2]:
+                        if o == play_mode.ai:
+                            o.have_puck = False
                 if self.y - self.bounding_box_size <= bottom_post:
                     self.y_velocity *= -1
                 elif self.y + self.bounding_box_size >= top_post:
@@ -114,10 +122,53 @@ class Puck:
                     self.y = 375
                     self.x_velocity = 0
                     self.y_velocity = 0
+                    for o in game_world.objects[2]:
+                        if o == play_mode.ai:
+                            o.have_puck = False
                 elif self.x + self.bounding_box_size >= right_post:
                     self.x_velocity *= -1
                 if self.y - self.bounding_box_size <= bottom_post:
                     self.y_velocity *= -1
                 elif self.y + self.bounding_box_size >= top_post:
                     self.y_velocity *= -1
+            pass
+        if group == 'ai:puck':
+            for o in game_world.objects[2]:
+                if o == play_mode.user:
+                    o.shooting = False
+                    o.contact_puck = False
+            other.have_puck = True
+            self.x_velocity = 0
+            self.y_velocity = 0
+            if other.face_dir == 0:
+                self.x = other.x + self.size
+                self.y = other.y - self.size
+                pass
+            elif other.face_dir == 1:
+                self.x = other.x - self.size
+                self.y = other.y - self.size
+            if other.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
+                x1, y1 = self.x, self.y
+                x2, y2 = 180, random.randint(250 + 25, 520 - 20)
+                self.x_velocity = x2 - x1
+                self.y_velocity = y2 - y1
+                self.x_velocity /= 150
+                self.y_velocity /= 150
+                if self.x_velocity < -20:
+                    self.x_velocity /= 4
+                    self.y_velocity /= 4
+                elif self.x_velocity < -10:
+                    self.x_velocity /= 2
+                    self.y_velocity /= 2
+                elif self.x_velocity < 0:
+                    self.x_velocity *= 2
+                    self.y_velocity *= 2
+                #     pass
+                if other.dir == 0:
+                    self.x += self.x_velocity * 40 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 40 * 100 * game_framework.frame_time
+                else:
+                    self.x += self.x_velocity * 50 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
+                print(f"{self.x_velocity, self.y_velocity}")
             pass
