@@ -97,6 +97,22 @@ class Ai:
     def handle_collision(self, group, other):
         if group == 'ai:puck':
             pass
+        if group =='ai:field':
+            if self.x - self.bounding_box_size <= 100:
+                self.x = 100 + self.bounding_box_size
+            elif self.x + self.bounding_box_size >= 1100:
+                self.x = 1100 - self.bounding_box_size
+            if self.y - self.bounding_box_size - 10 <= 50:
+                self.y = 50 + self.bounding_box_size + 10
+            elif self.y >= 700:
+                self.y = 700
+            pass
+        if group =='ai:post':
+            if 0 + 50 <= self.x <= 1200 - 50:
+                    self.x += self.RUN_SPEED_PPS * game_framework.frame_time
+            if 0 <= self.y <= 800:
+                    self.y -= self.RUN_SPEED_PPS * game_framework.frame_time
+            pass
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -166,7 +182,7 @@ class Ai:
     def avoid_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
         self.speed = self.RUN_SPEED_PPS
-        self.x -= self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time / 2
         self.y -= self.speed * math.sin(self.dir) * game_framework.frame_time
         if math.cos(self.dir) > 0:
             self.face_dir = 1
@@ -213,7 +229,7 @@ class Ai:
 
         a2 = Action('Move to forward', self.move_forward)
         c2 = Condition('공을 가지고 있는가', self.is_have_puck)
-        c3 = Condition('골대와 가까운가', self.is_near_post, 8)
+        c3 = Condition('골대와 가까운가', self.is_near_post, 10)
         a3 = Action('슛', self.shoot_puck)
         SEQ_shoot = Sequence('shooting', c2, c3, a3)
         a4 = Action('슈팅 중', self.is_shooting)
