@@ -98,8 +98,7 @@ class Ai:
 
     def handle_collision(self, group, other):
         if group == 'ai:puck':
-            self.have_puck = True
-        pass
+            pass
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -140,6 +139,9 @@ class Ai:
     def is_near_enemy(self, r):
 
         pass
+    def is_shooting(self):
+        pass
+
 
     def move_forward(self, r=0.5):
         for o in game_world.objects[0]:
