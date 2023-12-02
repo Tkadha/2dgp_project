@@ -44,6 +44,7 @@ class Ai:
         self.speed = self.RUN_SPEED_PPS
         self.state = 'IDLE'
         self.have_puck = False
+        self.shoot = False
         self.build_behavior_tree()
 
     def update(self):
@@ -57,13 +58,12 @@ class Ai:
                                  self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         elif self.state == 'SHOOT':
             self.action = 1
-            self.frame = (
-                                 self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+            self.frame = (self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         self.bt.run()
         pass
 
     def draw(self):
-        if self.state == 'IDLE' or 'RUN':
+        if self.state == 'IDLE' or self.state == 'RUN':
             if self.face_dir == 0:
                 self.image.clip_draw(int(self.frame) * 35, self.action * 40, 35, 40, self.x, self.y, self.size,
                                      self.size)
@@ -80,16 +80,14 @@ class Ai:
                                          self.size, self.size)
             elif self.face_dir == 1:
                 if self.frame < 4:
-                    self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 40, 0, 'h', self.x,
+                    self.image.clip_composite_draw(int(self.frame) * 35, self.action * 40, 35, 38, 0, 'h', self.x,
                                                    self.y,
                                                    self.size, self.size)
                 else:
-                    self.image.clip_composite_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 40, 0, 'h',
+                    self.image.clip_composite_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 38, 0, 'h',
                                                    self.x, self.y,
                                                    self.size, self.size)
-            pass
         draw_rectangle(*self.get_bb())
-
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
 
@@ -131,17 +129,23 @@ class Ai:
             return BehaviorTree.FAIL
         pass
 
-    def shoot_puck(self, r):
-
-        self.have_puck = False
-        pass
+    def shoot_puck(self):
+        self.state = 'SHOOT'
+        self.shoot = True
+        return BehaviorTree.SUCCESS
 
     def is_near_enemy(self, r):
 
         pass
-    def is_shooting(self):
-        pass
 
+    def is_shooting(self):
+        if self.shoot:
+            if self.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
+                self.have_puck = False
+                self.shoot = False
+                self.state = 'IDLE'
+            pass
+        pass
 
     def move_forward(self, r=0.5):
         for o in game_world.objects[0]:
@@ -155,6 +159,7 @@ class Ai:
         pass
 
     def avoid_enemy(self):
+
         pass
 
     def is_near_puck(self, r):
@@ -185,6 +190,10 @@ class Ai:
         a2 = Action('Move to forward', self.move_forward)
         c2 = Condition('공을 가지고 있는가', self.is_have_puck)
         root = SEQ_move_forward = Sequence("전진", c2, a2)
-        root = Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
+        root = SEL_move =Selector("전진 또는 공을 추적", SEQ_move_forward, SEQ_move_to_puck)
+        c3 = Condition('골대와 가까운가',self.is_near_post, 10)
+        a3 = Action('슛',self.shoot_puck)
+        SEQ_shoot=Sequence('shooting', c2,c3,a3)
+        root = Selector('shoot or move',SEQ_shoot,SEL_move)
         self.bt = BehaviorTree(root)
         pass
