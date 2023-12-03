@@ -2,17 +2,17 @@ from pico2d import load_image, draw_rectangle, load_font
 
 
 class Enemy_Goalpost:
+    score = 0
     def __init__(self):
         self.font = load_font('ENCR10B.TTF', 40)
-        self.right_score = 0
+        Enemy_Goalpost.score = 0
         pass
 
     def draw(self):
-        draw_rectangle(*self.get_bb())
-        self.font.draw(730, 730, f'{self.right_score}', (255, 255, 255))
+        self.font.draw(730, 730, f'{Enemy_Goalpost.score}', (255, 255, 255))
 
     def right_score_up(self):
-        self.right_score += 1
+        Enemy_Goalpost.score += 1
 
     def update(self):
         pass
@@ -21,4 +21,8 @@ class Enemy_Goalpost:
         return 995, 300, 985 + 50, 300 + 170
 
     def handle_collision(self, group, other):
+        if group == 'puck:post':
+            left_post, bottom_post, right_post, top_post = self.get_bb()
+            if other.x - other.bounding_box_size <= left_post:
+                self.right_score_up()
         pass
