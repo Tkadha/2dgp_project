@@ -85,11 +85,11 @@ class Idle:
 
     @staticmethod
     def exit(user, e):
-        if s_down(e) and user.skill_onoff == 'off':
+        if s_down(e) and user.skill_onoff == 'off' and user.skill_count > 0:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-                pass
+                user.skill_count -= 1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
         pass
@@ -113,6 +113,8 @@ class Idle:
                                            user.size,
                                            user.size)
         pass
+
+
 class Run:
 
     @staticmethod
@@ -142,10 +144,11 @@ class Run:
 
     @staticmethod
     def exit(user, e):
-        if s_down(e) and user.skill_onoff == 'off':
+        if s_down(e) and user.skill_onoff == 'off' and user.skill_count > 0:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
+                user.skill_count -= 1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
 
@@ -217,10 +220,11 @@ class Shoot:
     def exit(user, e):
         if user.contact_puck:
             user.shooting = True
-        if s_down(e) and user.skill_onoff == 'off':
+        if s_down(e) and user.skill_onoff == 'off' and user.skill_count > 0:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
+                user.skill_count-=1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
         pass
@@ -249,10 +253,11 @@ class Shoot:
         elif user.dir == 1:
             if user.frame < 4:
                 user.image.clip_composite_draw(int(user.frame) * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
-                                            user.size, user.size)
+                                               user.size, user.size)
             else:
-                user.image.clip_composite_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 40, 0, 'h', user.x, user.y,
-                                            user.size, user.size)
+                user.image.clip_composite_draw(int(user.frame - 3) * 40 + 3 * 35, user.action * 40, 35, 40, 0, 'h',
+                                               user.x, user.y,
+                                               user.size, user.size)
 
         pass
 
@@ -317,6 +322,7 @@ class User:
         self.skill = 'SizeUp'
         self.skill_time = get_time()
         self.skill_onoff = 'off'
+        self.skill_count = 5
         self.RUN_SPEED_KMPH = 40.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.load_image(image)
