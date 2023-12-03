@@ -37,7 +37,7 @@ class Ai:
         self.size = 75
         self.bounding_box_size = 25
         self.load_image(image)
-        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 40.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.speed = self.RUN_SPEED_PPS
         self.state = 'IDLE'
@@ -48,16 +48,13 @@ class Ai:
     def update(self):
         if self.state == 'IDLE':
             self.action = 3
-            self.frame = (
-                                 self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
+            self.frame = (self.frame + IDLE_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % IDLE_FRAMES_PER_ACTION
         elif self.state == 'RUN':
             self.action = 2
-            self.frame = (
-                                 self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
+            self.frame = (self.frame + RUN_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES_PER_ACTION
         elif self.state == 'SHOOT':
             self.action = 1
-            self.frame = (
-                                     self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
+            self.frame = (self.frame + SHOOT_FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % SHOOT_FRAMES_PER_ACTION
         self.bt.run()
         pass
 
@@ -86,7 +83,6 @@ class Ai:
                     self.image.clip_composite_draw(int(self.frame - 3) * 40 + 3 * 35, self.action * 40, 35, 38, 0, 'h',
                                                    self.x, self.y,
                                                    self.size, self.size)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
@@ -138,7 +134,6 @@ class Ai:
         for o in game_world.objects[0]:
             if o == play_mode.our_goalpost:
                 px, py = o.x, o.y
-                break
         if self.distance_less_than(px, py, self.x, self.y, r):
             return BehaviorTree.SUCCESS
         else:
@@ -182,7 +177,10 @@ class Ai:
     def avoid_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
         self.speed = self.RUN_SPEED_PPS
-        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time / 2
+        if math.cos(self.dir) <0:
+            self.x += self.speed * math.cos(self.dir) * game_framework.frame_time / 2
+        else:
+            self.x -= self.speed * math.cos(self.dir) * game_framework.frame_time / 2
         self.y -= self.speed * math.sin(self.dir) * game_framework.frame_time
         if math.cos(self.dir) > 0:
             self.face_dir = 1

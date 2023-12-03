@@ -77,7 +77,6 @@ class Idle:
         user.frame = 0
         user.key_down_count = 0
         user.LR_way, user.UD_way = 0, 0
-        user.RUN_SPEED_KMPH = 20.0  # Km / Hour
         if time_out(e):
             if user.skill == 'SizeUp':
                 user.size = 75
@@ -318,7 +317,7 @@ class User:
         self.skill = 'SizeUp'
         self.skill_time = get_time()
         self.skill_onoff = 'off'
-        self.RUN_SPEED_KMPH = 20.0  # Km / Hour
+        self.RUN_SPEED_KMPH = 40.0  # Km / Hour
         self.RUN_SPEED_PPS = (((self.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         self.load_image(image)
         self.state_machine = StateMachine(self)
@@ -333,7 +332,6 @@ class User:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - self.bounding_box_size, self.y - self.bounding_box_size - 10, self.x + self.bounding_box_size, self.y
