@@ -22,10 +22,18 @@ def score(left, right):
     right_score = right
 
 def vic_char(image):
-
+    global vic_hockey
+    if image == 'black':
+        vic_hockey = load_image('./resource/black_hockey.png')
+    elif image == 'yellow':
+        vic_hockey = load_image('./resource/yellow_hockey.png')
+    elif image == 'red':
+        vic_hockey = load_image('./resource/red_hockey.png')
 def finish():
     global background
+    global vic_hockey
     del background
+    del vic_hockey
 
 
 def handle_events():
@@ -49,4 +57,5 @@ def draw():
     background.draw(600, 400)
     font.draw(200, 400, f'{left_score}', (255, 255, 255))
     font.draw(850, 400, f'{right_score}', (255, 255, 255))
+    vic_hockey.clip_draw(0, 0, 35, 38, 450, 100, 100, 100)
     update_canvas()
