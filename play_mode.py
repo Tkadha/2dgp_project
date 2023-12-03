@@ -1,5 +1,6 @@
 from pico2d import *
 
+import ending_mode
 import game_framework
 import game_world
 import title_mode
@@ -80,10 +81,14 @@ def update():
     for o in game_world.objects[0]:
         if o == our_goalpost:
             if o.score >= 10:
-                game_framework.change_mode(title_mode)
+                ending_mode.vic_char(right)
+                ending_mode.score(our_goalpost.score,enemy_goalpost.score)
+                game_framework.change_mode(ending_mode)
         elif o == enemy_goalpost:
             if o.score >= 10:
-                game_framework.change_mode(title_mode)
+                ending_mode.vic_char(left)
+                ending_mode.score(our_goalpost.score,enemy_goalpost.score)
+                game_framework.change_mode(ending_mode)
 
 
 def draw():
