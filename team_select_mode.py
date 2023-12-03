@@ -2,7 +2,6 @@ from pico2d import *
 
 import game_framework
 import play_mode
-import skill_select_mode
 import title_mode
 
 
@@ -18,6 +17,7 @@ def init():
     global choice_1
     global choice_2
     global choice_3
+    global bgm
     select = 0
     image = load_image('./resource/select_background.png')
     black = load_image('./resource/Black.png')
@@ -29,6 +29,8 @@ def init():
     choice_1 = load_image('./resource/1.png')
     choice_2 = load_image('./resource/2.png')
     choice_3 = load_image('./resource/3.png')
+    bgm = load_music('./sound/pick.mp3')
+    bgm.set_volume(32)
 
 def finish():
     global image
@@ -59,6 +61,7 @@ def handle_events():
     global select
     events = get_events()
     for event in events:
+        bgm.play()
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
@@ -69,7 +72,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
             if select >= 2:
                 play_mode.select_team(left, right)
-                game_framework.change_mode(skill_select_mode)
+                game_framework.change_mode(play_mode)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
             if select == 0:
                 left = 'black'

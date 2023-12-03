@@ -5,7 +5,10 @@ import play_mode
 import team_select_mode
 def init():
     global image
+    global bgm
     image = load_image('./resource/title.png')
+    bgm = load_music('./sound/pick.mp3')
+    bgm.set_volume(32)
 
 
 def finish():
@@ -21,6 +24,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            bgm.play()
             game_framework.change_mode(team_select_mode)
 
 def update():
