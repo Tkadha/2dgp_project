@@ -47,7 +47,6 @@ def init():
     global right
     running = True
     world = []
-
     field = Field()
     game_world.add_object(field, 0)
     our_goalpost = Our_Goalpost()
@@ -62,7 +61,6 @@ def init():
 
     ai = Ai(800, 400, 1, right)
     game_world.add_object(ai, 2)
-
     game_world.add_collision_pair('user:puck', user, puck)
     game_world.add_collision_pair('ai:puck', ai, puck)
     game_world.add_collision_pair('user:field', user, field)
@@ -79,6 +77,13 @@ def init():
 def update():
     game_world.update()
     game_world.handle_collisions()
+    for o in game_world.objects[0]:
+        if o == our_goalpost:
+            if o.score >= 10:
+                game_framework.change_mode(title_mode)
+        elif o == enemy_goalpost:
+            if o.score >= 10:
+                game_framework.change_mode(title_mode)
 
 
 def draw():
@@ -90,7 +95,17 @@ def draw():
 def finish():
     for layer in game_world.objects:
         for o in layer:
+            print(f'{o} delete')
             layer.remove(o)
+    for layer in game_world.objects:
+        for o in layer:
+            print(f'{o} delete')
+            layer.remove(o)
+    for layer in game_world.objects:
+        for o in layer:
+            print(f'{o} delete')
+            layer.remove(o)
+    field.bgm.stop()
     pass
 
 
