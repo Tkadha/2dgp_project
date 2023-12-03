@@ -95,15 +95,12 @@ def draw():
 def finish():
     for layer in game_world.objects:
         for o in layer:
-            print(f'{o} delete')
             layer.remove(o)
     for layer in game_world.objects:
         for o in layer:
-            print(f'{o} delete')
             layer.remove(o)
     for layer in game_world.objects:
         for o in layer:
-            print(f'{o} delete')
             layer.remove(o)
     field.bgm.stop()
     pass
