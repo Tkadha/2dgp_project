@@ -11,8 +11,8 @@ SHOOT_FRAMES_PER_ACTION = 6
 
 
 class Puck:
+    bgm = None
     image = None
-
     def __init__(self):
         if Puck.image == None:
             Puck.image = load_image('./resource/hockeypuck.png')
@@ -22,10 +22,11 @@ class Puck:
         self.y_velocity = 0
         self.size = 25
         self.bounding_box_size = self.size / 2
+        Puck.bgm = load_wav('./sound/shooting.wav')
+        Puck.bgm.set_volume(32)
 
     def draw(self):
         self.image.clip_draw(0, 0, 100, 75, self.x, self.y, self.size, self.size)
-        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.x += self.x_velocity * 100 * game_framework.frame_time
@@ -77,7 +78,7 @@ class Puck:
                     self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
                 other.shooting = False
                 other.contact_puck = False
-                print(f"{self.x_velocity, self.y_velocity}")
+                Puck.bgm.play()
                 pass
         if group == 'puck:field':
             if self.x - self.bounding_box_size <= 100:
@@ -103,7 +104,6 @@ class Puck:
                 if self.x - self.bounding_box_size <= left_post:
                     self.x_velocity *= -1
                 elif self.x + self.bounding_box_size >= right_post:
-                    other.left_score_up()
                     self.x = 600
                     self.y = 375
                     self.x_velocity = 0
@@ -117,7 +117,6 @@ class Puck:
                     self.y_velocity *= -1
             else:
                 if self.x - self.bounding_box_size <= left_post:
-                    other.right_score_up()
                     self.x = 600
                     self.y = 375
                     self.x_velocity = 0
@@ -160,7 +159,7 @@ class Puck:
                 elif self.x_velocity < -10:
                     self.x_velocity /= 2
                     self.y_velocity /= 2
-                elif self.x_velocity < 0:
+                else:
                     self.x_velocity *= 2
                     self.y_velocity *= 2
                 #     pass
@@ -170,5 +169,5 @@ class Puck:
                 else:
                     self.x += self.x_velocity * 50 * 100 * game_framework.frame_time
                     self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
-                print(f"{self.x_velocity, self.y_velocity}")
+                Puck.bgm.play()
             pass
