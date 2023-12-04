@@ -17,7 +17,7 @@ class Field:
         pass
 
     def get_bb(self):
-        return 0 + 100, 0 + 50, 1200 - 100, 800 - 100
+        return 0 + 75, 0 + 50, 1200 - 75, 800 - 100
 
     def handle_collision(self, group, other):
         if group == 'user:field':

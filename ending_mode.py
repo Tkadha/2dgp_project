@@ -6,10 +6,12 @@ import title_mode
 
 def init():
     global background
+    global press
     global bgm
     global font
     font = load_font('ENCR10B.TTF', 200)
     background = load_image('./resource/ending.png')
+    press = load_image('./resource/press_space.png')
     bgm = load_music('./sound/ending.mp3')
     bgm.set_volume(32)
     bgm.play()
@@ -58,4 +60,5 @@ def draw():
     font.draw(200, 400, f'{left_score}', (255, 255, 255))
     font.draw(850, 400, f'{right_score}', (255, 255, 255))
     vic_hockey.clip_draw(0, 0, 35, 38, 450, 100, 100, 100)
+    press.draw(750,75,500,200)
     update_canvas()

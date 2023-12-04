@@ -94,14 +94,15 @@ class Ai:
         if group == 'ai:puck':
             pass
         if group =='ai:field':
-            if self.x - self.bounding_box_size <= 100:
-                self.x = 100 + self.bounding_box_size
-            elif self.x + self.bounding_box_size >= 1100:
-                self.x = 1100 - self.bounding_box_size
-            if self.y - self.bounding_box_size - 10 <= 50:
-                self.y = 50 + self.bounding_box_size + 10
-            elif self.y >= 700:
-                self.y = 700
+            left_field, bottom_field, right_field, top_field = other.get_bb()
+            if self.x - self.bounding_box_size <= left_field:
+                self.x = left_field + self.bounding_box_size
+            elif self.x + self.bounding_box_size >= right_field:
+                self.x = right_field - self.bounding_box_size
+            if self.y - self.bounding_box_size - 10 <= bottom_field:
+                self.y = bottom_field + self.bounding_box_size + 10
+            elif self.y >= top_field:
+                self.y = top_field
             pass
         if group =='ai:post':
             if 0 + 50 <= self.x <= 1200 - 50:
