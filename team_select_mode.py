@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import play_mode
+import skill_select_mode
 import title_mode
 
 
@@ -61,19 +62,21 @@ def handle_events():
     global select
     events = get_events()
     for event in events:
-        bgm.play()
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            bgm.play()
             if select == 0:
                 game_framework.change_mode(title_mode)
             else:
                 select -= 1
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            bgm.play()
             if select >= 2:
                 play_mode.select_team(left, right)
-                game_framework.change_mode(play_mode)
+                game_framework.change_mode(skill_select_mode)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
+            bgm.play()
             if select == 0:
                 left = 'black'
                 select += 1
@@ -83,6 +86,7 @@ def handle_events():
                     select += 1
             pass
         elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
+            bgm.play()
             if select == 0:
                 left = 'red'
                 select += 1
@@ -92,6 +96,7 @@ def handle_events():
                     select += 1
             pass
         elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
+            bgm.play()
             if select == 0:
                 left = 'yellow'
                 select += 1

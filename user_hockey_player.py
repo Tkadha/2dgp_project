@@ -81,6 +81,9 @@ class Idle:
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 40.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         pass
 
     @staticmethod
@@ -89,7 +92,10 @@ class Idle:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-                user.skill_count -= 1
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 80.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+            user.skill_count -= 1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
         pass
@@ -140,6 +146,9 @@ class Run:
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 40.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         pass
 
     @staticmethod
@@ -148,7 +157,10 @@ class Run:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-                user.skill_count -= 1
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 80.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+            user.skill_count -= 1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
 
@@ -214,6 +226,9 @@ class Shoot:
             if user.skill == 'SizeUp':
                 user.size = 75
                 user.bounding_box_size = 25
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 40.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
         pass
 
     @staticmethod
@@ -224,7 +239,10 @@ class Shoot:
             if user.skill == 'SizeUp':
                 user.size *= 2
                 user.bounding_box_size *= 2
-                user.skill_count-=1
+            elif user.skill == 'SpeedUp':
+                user.RUN_SPEED_KMPH = 80.0  # Km / Hour
+                user.RUN_SPEED_PPS = (((user.RUN_SPEED_KMPH * 1000.0 / 60.0) / 60.0) * PIXEL_PER_METER)
+            user.skill_count-=1
             user.skill_onoff = 'on'
             user.skill_time = get_time()
         pass
@@ -307,7 +325,7 @@ class User:
             elif image == 'red':
                 self.image = load_image('./resource/red_hockey.png')
 
-    def __init__(self, image=None):
+    def __init__(self, image=None, s='SizeUp'):
         self.x, self.y = 400, 400
         self.frame = 0
         self.dir = 0
@@ -319,7 +337,7 @@ class User:
         self.bounding_box_size = 25
         self.shooting = False
         self.contact_puck = False
-        self.skill = 'SizeUp'
+        self.skill = s
         self.skill_time = get_time()
         self.skill_onoff = 'off'
         self.skill_count = 5

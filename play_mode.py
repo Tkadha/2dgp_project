@@ -35,6 +35,9 @@ def select_team(l, r):
     right = r
     pass
 
+def select_skill(s):
+    global skill
+    skill = s
 
 def init():
     global running
@@ -56,13 +59,14 @@ def init():
     game_world.add_object(our_goalpost, 0)
     game_world.add_object(enemy_goalpost, 0)
 
-    user = User(left)
+    user = User(left, skill)
     game_world.add_object(user, 2)
     puck = Puck()
     game_world.add_object(puck, 1)
 
     ai = Ai(800, 400, 1, right)
     game_world.add_object(ai, 2)
+
     game_world.add_collision_pair('user:puck', user, puck)
     game_world.add_collision_pair('ai:puck', ai, puck)
     game_world.add_collision_pair('user:field', user, field)

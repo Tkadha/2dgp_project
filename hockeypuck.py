@@ -149,7 +149,7 @@ class Puck:
                 self.y = other.y - self.size
             if other.frame + 1 >= SHOOT_FRAMES_PER_ACTION:
                 x1, y1 = self.x, self.y
-                x2, y2 = 180, random.randint(250 + 25, 520 - 20)
+                x2, y2 = 1000, random.randint(200 , 570)
                 self.x_velocity = x2 - x1
                 self.y_velocity = y2 - y1
                 self.x_velocity /= 150
