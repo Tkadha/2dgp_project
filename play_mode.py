@@ -3,6 +3,7 @@ from pico2d import *
 import ending_mode
 import game_framework
 import game_world
+import pause_mode
 import title_mode
 from user_hockey_player import User
 from field import Field
@@ -22,7 +23,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.change_mode(title_mode)
+            game_framework.push_mode(pause_mode)
         else:
             user.handle_event(event)
 
