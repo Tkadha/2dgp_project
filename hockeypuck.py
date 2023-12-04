@@ -71,11 +71,11 @@ class Puck:
                     self.y_velocity *= 2
                 #     pass
                 if other.dir == 0:
-                    self.x += self.x_velocity * 40 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 40 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 20 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 20 * 100 * game_framework.frame_time
                 else:
-                    self.x += self.x_velocity * 50 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 30 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 30 * 100 * game_framework.frame_time
                 other.shooting = False
                 other.contact_puck = False
                 Puck.bgm.play()
@@ -165,10 +165,10 @@ class Puck:
                     self.y_velocity *= 2
                 #     pass
                 if other.dir == 0:
-                    self.x += self.x_velocity * 40 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 40 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 20 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 20 * 100 * game_framework.frame_time
                 else:
-                    self.x += self.x_velocity * 50 * 100 * game_framework.frame_time
-                    self.y += self.y_velocity * 50 * 100 * game_framework.frame_time
+                    self.x += self.x_velocity * 30 * 100 * game_framework.frame_time
+                    self.y += self.y_velocity * 30 * 100 * game_framework.frame_time
                 Puck.bgm.play()
             pass
