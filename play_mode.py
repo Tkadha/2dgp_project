@@ -50,6 +50,10 @@ def init():
     global enemy_goalpost
     global left
     global right
+    global play_time
+    global font
+    play_time = get_time()
+    font = load_font('ENCR10B.TTF', 40)
     running = True
     world = []
     field = Field()
@@ -83,6 +87,13 @@ def init():
 def update():
     game_world.update()
     game_world.handle_collisions()
+    if get_time() - play_time > 90:
+        if our_goalpost.score > enemy_goalpost.score:
+            ending_mode.vic_char(right)
+        else:
+            ending_mode.vic_char(left)
+        ending_mode.score(our_goalpost.score, enemy_goalpost.score)
+        game_framework.change_mode(ending_mode)
     for o in game_world.objects[0]:
         if o == our_goalpost:
             if o.score >= 10:
@@ -99,6 +110,7 @@ def update():
 def draw():
     clear_canvas()
     game_world.render()
+    font.draw(600, 730, f'{ 90 - int(get_time()-play_time)}', (255, 255, 255))
     update_canvas()
 
 
