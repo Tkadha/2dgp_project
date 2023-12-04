@@ -107,6 +107,17 @@ def finish():
     for layer in game_world.objects:
         for o in layer:
             layer.remove(o)
+
+    del game_world.collision_pairs['user:puck']
+    del game_world.collision_pairs['ai:puck']
+
+    del game_world.collision_pairs['user:field']
+    del game_world.collision_pairs['puck:field']
+    del game_world.collision_pairs['ai:field']
+
+    del game_world.collision_pairs['puck:post']
+    del game_world.collision_pairs['user:post']
+    del game_world.collision_pairs['ai:post']
     field.bgm.stop()
     pass
 
