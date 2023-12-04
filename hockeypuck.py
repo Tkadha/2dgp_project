@@ -55,7 +55,7 @@ class Puck:
                 self.y = other.y - self.size
             if other.shooting:
                 x1, y1 = self.x, self.y
-                x2, y2 = 1000, random.randint(250 + 25, 520 - 20)
+                x2, y2 = 1000, random.randint(200 , 570)
                 self.x_velocity = x2 - x1
                 self.y_velocity = y2 - y1
                 self.x_velocity /= 150
@@ -81,19 +81,20 @@ class Puck:
                 Puck.bgm.play()
                 pass
         if group == 'puck:field':
-            if self.x - self.bounding_box_size <= 100:
+            left_field, bottom_field, right_field, top_field = other.get_bb()
+            if self.x - self.bounding_box_size <= left_field:
                 self.x -= self.x_velocity * 100 * game_framework.frame_time
                 self.y -= self.y_velocity * 100 * game_framework.frame_time
                 self.x_velocity *= -1
-            elif self.x + self.bounding_box_size >= 1100:
+            elif self.x + self.bounding_box_size >= right_field:
                 self.x -= self.x_velocity * 100 * game_framework.frame_time
                 self.y -= self.y_velocity * 100 * game_framework.frame_time
                 self.x_velocity *= -1
-            if self.y - self.bounding_box_size <= 50:
+            if self.y - self.bounding_box_size <= bottom_field:
                 self.x -= self.x_velocity * 100 * game_framework.frame_time
                 self.y -= self.y_velocity * 100 * game_framework.frame_time
                 self.y_velocity *= -1
-            elif self.y + self.bounding_box_size >= 700:
+            elif self.y + self.bounding_box_size >= top_field:
                 self.x -= self.x_velocity * 100 * game_framework.frame_time
                 self.y -= self.y_velocity * 100 * game_framework.frame_time
                 self.y_velocity *= -1
